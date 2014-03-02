@@ -1,0 +1,89 @@
+body {
+	padding-top: 0;
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+	margin-top: 0;
+	margin-left: 0;
+	margin-right: 0;
+	margin-bottom: 0;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	background-color: #f4f4f4;
+	font-family: Helvetica;
+}
+.header {
+	padding-top: 12px;
+	background: linear-gradient(#058182, #2a3a52);
+	height: 62px;
+	position: fixed;
+	width: 100%;
+}
+.logo {
+	background: url('../img/logo.png');
+	background-repeat: no-repeat;
+	left: 0;
+	width: 132px;
+	height: 55px;
+	float: left;
+}
+.header_button_container .logo
+{
+	width: 50%;
+	position: absolute;
+}
+.header_button_container
+{
+	right: 0;
+	float: right;
+}
+.header_button {
+	margin-right: 5px;
+	margin-top: 5px;
+	height: 40px;
+	width: 40px;
+	float: left;
+}
+.header_search{
+	background: url('../img/header_search.png');
+}
+.header_fave{
+	background: url('../img/header_fav.png');
+}
+.header_refresh{
+	background: url('../img/header_refresh.png');
+}
+.container {
+	margin-top: 75px;
+	right: 0;
+	float: right;
+}
+.station_title {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	margin-right: 5px;
+	float: right;
+	font-size: 21px;
+
+}
+.stations {
+	float: right;
+	margin-right: 10px;
+	width: 400px;
+	text-align: right;
+	border-style: solid;
+	border-width: 3px;
+	border-color: #b5b5b5;
+	font-size: 25px;
+	font-weight: bold;
+	
+}
+tr td{
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #dedede;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
