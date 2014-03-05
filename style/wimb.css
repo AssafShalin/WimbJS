@@ -13,17 +13,22 @@ body {
 	right: 0;
 	background-color: #f4f4f4;
 	font-family: Helvetica;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 .header {
-	padding-top: 12px;
+	padding-top: 11px;
 	background: linear-gradient(#058182, #2a3a52);
-	height: 62px;
+	background-image: -webkit-linear-gradient(top, #058182, #2a3a52);
+	height: 48px;
 	position: fixed;
 	width: 100%;
 }
 .logo {
 	background: url('../img/logo.png');
 	background-repeat: no-repeat;
+	background-size: 70%;
 	left: 0;
 	width: 132px;
 	height: 55px;
@@ -34,16 +39,26 @@ body {
 	width: 50%;
 	position: absolute;
 }
+
 .header_button_container
 {
 	right: 0;
 	float: right;
+}
+.header_button_container div
+{
+	background-size: 70%;
+	background-repeat: no-repeat;
 }
 .header_button {
 	margin-right: 5px;
 	margin-top: 5px;
 	height: 40px;
 	width: 40px;
+	padding-left: 0;
+	padding-right: 0;
+	margin-left: 0;
+	margin-right: 0;
 	float: left;
 }
 .header_search{
@@ -59,31 +74,82 @@ body {
 	margin-top: 75px;
 	right: 0;
 	float: right;
+	width: 100%;
 }
 .station_title {
-	margin-top: 20px;
-	margin-bottom: 20px;
+	margin-top: 0px;
+	margin-bottom: 10px;
 	margin-right: 5px;
-	float: right;
-	font-size: 21px;
+	direction: rtl;
+	font-size: 16px;
 
 }
 .stations {
-	float: right;
-	margin-right: 10px;
-	width: 400px;
+	width: 96%;
 	text-align: right;
 	border-style: solid;
 	border-width: 3px;
 	border-color: #b5b5b5;
-	font-size: 25px;
-	font-weight: bold;
+	margin: auto;
 	
 }
 tr td{
 	border-bottom-style: solid;
 	border-bottom-width: 1px;
 	border-bottom-color: #dedede;
-	padding-top: 20px;
-	padding-bottom: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	cursor: pointer;
+}
+.station_name {
+	font-size: 17px;
+	font-weight: bold;
+}
+.station_number, .station_location
+{
+	font-size: 12px;
+	color: #7d7d7d;
+}
+tr:active .station_number, tr:active .station_location
+{
+	color: #ffffff;
+}
+.station_location {
+	display: inline;
+}
+.station_number {
+	float: left;
+}
+.line_container .station_name {
+	padding-top: 5px;
+}
+.station_operator {
+	
+	background-size: 100% 100%;
+	width: 64px;
+	height: 64px;
+	float: right;
+}
+.stations tr:active {
+	background-color: #0072ff;
+}
+#loader {
+	background-image: url('../img/ajax.gif');
+	width: 40px;
+	height: 40px;
+	position: fixed;
+	margin: 50% auto;
+  	left: 0;
+  	right: 0;
+
+}
+.line_time {
+	direction: rtl;
+	float: left;
+	font-size: 12px;
+	margin-top: -9px;
+}
+.line_min {
+	font-size: 20px;
+	font-weight: bold;
 }
