@@ -1,7 +1,40 @@
+var SCREEN_MODE = {'stations_select' : 0,'station_view':1};
+var screenMode;
+var station_id;
+
+
 $(document).ready(function() {
 	getStations();
-	$("#station_list").delegate('tr', 'click', function() {
-        var station_id = this.children[0].children[0].id;
+	$("#station_list").delegate('tr', 'click', function() {	
+		if(screenMode == SCREEN_MODE.stations_select)
+		{
+			station_id = this.children[0].children[0].id;
+			loadReports();	
+		}
+    });
+    window.screenMode = SCREEN_MODE.stations_select;
+});
+function reload()
+{
+	if(window.screenMode == SCREEN_MODE.stations_select)
+	{
+		getStations();	
+	}
+	else if(window.screenMode == SCREEN_MODE.station_view)
+	{
+		loadReports();
+	}
+}
+function search()
+{
+
+}
+function fave()
+{
+	getStations();
+}
+function loadReports()
+{
         $('#station_list').html("");
         showLoader();
         var g = $.get('ajax/info.php?stop_code=' + station_id, function (data) {
@@ -10,18 +43,14 @@ $(document).ready(function() {
         		templateLine(data[i]);
         	}
         	hideLoader();
+        	
         });
         g.fail( function () {
         	hideLoader();
         	alert('An error occurred, please try again later.');
 
         });
-
-    });
-});
-function loadReports()
-{
-	alert('click');
+        window.screenMode = SCREEN_MODE.station_view;
 }
 
 function showLoader()
@@ -34,6 +63,9 @@ function hideLoader()
 }
 function getStations()
 {
+	window.screenMode = SCREEN_MODE.stations_select;
+	showLoader();
+	$('#station_list').html("");
 	$.get('ajax/stations.php',function (stations) {
 		for(i=0;i<stations.length;i++)
 		{
@@ -41,6 +73,7 @@ function getStations()
 			hideLoader();
 		}
 	});
+	
 }
 
 function templateStation(station)
@@ -58,9 +91,9 @@ function templateLine(line)
 {
 	var template= '	<tr><td> ' +
 							'<div class="line_container" id="'+ line.id +'">' +
-							'<div class="station_operator" style="background-image: url(\'../img/operators/' + line.operator + '.png\');"></div>' +
+							'<div class="station_operator" style="background-image: url(\'img/operators/' + line.operator + '.png\');"></div>' +
 							'<div class="station_name">' +  line.line_number +'</div>' +
-							'<div class="station_location"></div>' +
+							'<div class="station_location">'+ line.dest_desc +'</div>' +
 							'<div class="line_time">מגיע בעוד <span class="line_min">'+ line.arrive +'</span> דק\'</div>' +
 						'</div>' +
 					'</td></tr>';

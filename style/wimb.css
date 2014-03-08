@@ -17,6 +17,15 @@ body {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
+.orientleft #shell {
+    -webkit-transform: rotate(-90deg);
+    -webkit-transform-origin:160px 160px;
+}
+
+.orientright #shell {
+    -webkit-transform: rotate(90deg);
+    -webkit-transform-origin:230px 230px;
+}
 .header {
 	padding-top: 11px;
 	background: linear-gradient(#058182, #2a3a52);
@@ -60,6 +69,7 @@ body {
 	margin-left: 0;
 	margin-right: 0;
 	float: left;
+	cursor: pointer;
 }
 .header_search{
 	background: url('../img/header_search.png');
@@ -125,7 +135,9 @@ tr:active .station_number, tr:active .station_location
 }
 .station_operator {
 	
-	background-size: 100% 100%;
+	background-size: 89%;
+	background-repeat: no-repeat;
+	margin-right: -11px;
 	width: 64px;
 	height: 64px;
 	float: right;
