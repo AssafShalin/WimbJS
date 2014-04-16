@@ -1,10 +1,19 @@
 <html>
 	<head>
+		<meta http-equiv="cache-control" content="max-age=0" />
+		<meta http-equiv="cache-control" content="no-cache" />
+		<meta http-equiv="expires" content="0" />
+		<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+		<meta http-equiv="pragma" content="no-cache" />
 		<title>Wimb</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
 		<meta name="viewport" content="user-scalable=no, width=device-width" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+		<link rel="apple-touch-startup-image" href="img/splash-640x920.png" media="(max-device-width : 480px) and (-webkit-min-device-pixel-ratio : 2)">
+		<link rel="apple-touch-startup-image" href="img/splash-640x1096.png" media="(max-device-width : 548px) and (-webkit-min-device-pixel-ratio : 2)">
+		
 		<link rel="apple-touch-icon" href="img/icon.png"/>
 		<link rel="icon" type="image/png" href="img/icon.png">
 		<link rel="stylesheet" type="text/css" href="style/wimb.css">
@@ -21,7 +30,10 @@
 			</div>
 		</div>
 		<div class="container">
-			<div class="station_title">התחנות שלי</div>
+			<div id="search_bar">
+				
+			</div>
+			<div class="station_title" id="title"></div>
 			<table class="stations" id="station_list">
 			</table>
 		</div>

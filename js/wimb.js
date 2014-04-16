@@ -33,14 +33,22 @@ function fave()
 {
 	getStations();
 }
+function showSearch()
+{
+	setTitle('חיפוש');
+	
+}
 function loadReports()
 {
-        $('#station_list').html("");
         showLoader();
         var g = $.get('ajax/info.php?stop_code=' + station_id, function (data) {
-        	for(i=0;i<data.length;i++)
+        	var stop_name = data.stop_name;
+        	var eta = data.eta;
+        	$('#station_list').html("");
+        	setTitle(stop_name);
+        	for(i=0;i<eta.length;i++)
         	{
-        		templateLine(data[i]);
+        		templateLine(eta[i]);
         	}
         	hideLoader();
         	
@@ -53,6 +61,12 @@ function loadReports()
         window.screenMode = SCREEN_MODE.station_view;
 }
 
+
+function setTitle(title)
+{
+	var titleText = $('#title');
+	titleText.text(title);
+}
 function showLoader()
 {
 	$('#loader').show();
@@ -65,13 +79,14 @@ function getStations()
 {
 	window.screenMode = SCREEN_MODE.stations_select;
 	showLoader();
-	$('#station_list').html("");
 	$.get('ajax/stations.php',function (stations) {
+		$('#station_list').html("");
+		setTitle('התחנות שלי');
 		for(i=0;i<stations.length;i++)
 		{
 			templateStation(stations[i]);
-			hideLoader();
 		}
+		hideLoader();
 	});
 	
 }
@@ -89,12 +104,17 @@ function templateStation(station)
 }
 function templateLine(line)
 {
+	var eta;
+	if(line.arrive > 1)				
+		eta = '<div class="line_time">מגיע בעוד <span class="line_min">'+ line.arrive +'</span> דק\'</div>';
+	else
+		eta = '<div class="line_time">מגיע <span class="line_min">עכשיו</span></div>';
 	var template= '	<tr><td> ' +
 							'<div class="line_container" id="'+ line.id +'">' +
 							'<div class="station_operator" style="background-image: url(\'img/operators/' + line.operator + '.png\');"></div>' +
 							'<div class="station_name">' +  line.line_number +'</div>' +
 							'<div class="station_location">'+ line.dest_desc +'</div>' +
-							'<div class="line_time">מגיע בעוד <span class="line_min">'+ line.arrive +'</span> דק\'</div>' +
+							eta  +
 						'</div>' +
 					'</td></tr>';
 	$('#station_list').append(template);

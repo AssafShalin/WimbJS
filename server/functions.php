@@ -28,7 +28,7 @@ function getStationsListInfo($stations_array)
 	// Open the file using the HTTP headers set above
 	return $resp;
 }
-function getStationInfo($stop_code)
+function getStationsETA($stop_code)
 {
 	$url = "http://54.243.87.53:8080/MyServlet3/Send?stop_code=". $stop_code ."&uuid=56c97211-09d1-421e-8109-aceb17feec7a";
 	$curl = curl_init($url);
