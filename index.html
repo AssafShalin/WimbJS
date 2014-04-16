@@ -30,8 +30,9 @@
 			</div>
 		</div>
 		<div class="container">
-			<div id="search_bar">
-				
+			<div id="search_bar" style="display: none;">
+				<input id="search_text" type="text" pattern="[0-9]*" placeholder="הכנס מספר קו" maxlength="5"/>
+				<div id="search_button" class="button" onclick="searchOnClick();">חפש</div>
 			</div>
 			<div class="station_title" id="title"></div>
 			<table class="stations" id="station_list">

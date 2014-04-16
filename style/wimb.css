@@ -17,6 +17,11 @@ body {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
+input {
+    -webkit-appearance: none;
+    -webkit-border-radius:0px;
+    border-radius: 0;
+}
 .orientleft #shell {
     -webkit-transform: rotate(-90deg);
     -webkit-transform-origin:160px 160px;
@@ -85,6 +90,9 @@ body {
 	right: 0;
 	float: right;
 	width: 100%;
+	height: 100px;
+	display: block;
+	max-height: 100px;
 }
 .station_title {
 	margin-top: 0px;
@@ -96,11 +104,14 @@ body {
 }
 .stations {
 	width: 96%;
+	height: 30px;
+	background-color: #FFFFFF;
 	text-align: right;
 	border-style: solid;
 	border-width: 3px;
 	border-color: #b5b5b5;
 	margin: auto;
+	overflow-y: scroll;
 	
 }
 tr td{
@@ -110,6 +121,8 @@ tr td{
 	padding-top: 5px;
 	padding-bottom: 5px;
 	cursor: pointer;
+	background-color: #FFFFFF;
+	width: 100%;
 }
 .station_name {
 	font-size: 17px;
@@ -119,10 +132,6 @@ tr td{
 {
 	font-size: 12px;
 	color: #7d7d7d;
-}
-tr:active .station_number, tr:active .station_location
-{
-	color: #ffffff;
 }
 .station_location {
 	display: inline;
@@ -164,4 +173,41 @@ tr:active .station_number, tr:active .station_location
 .line_min {
 	font-size: 20px;
 	font-weight: bold;
+}
+#search_bar {
+	width: 96%;
+	margin: auto;
+
+	margin-bottom: 20px;
+}
+#search_text {
+	float: right;
+	border: 3px #b5b5b5 solid;
+	background-color: #FFFFFF;
+	font-family: Helvetica;
+	text-align:center;
+	width: 62%;
+	font-size: 17px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+	margin-left: 0px;
+	padding-right: 0px;
+	height: 36px;
+}
+#search_button {
+	height: 30px;
+	width: 33%;
+	border: 3px #b5b5b5 solid;
+	background-color: #FFFFFF;
+	margin-right: 5%;
+	text-align: center;
+	font-size: 17px;
+	cursor: pointer;
+	vertical-align: middle;
+	line-height: 30px; 	
+
+}
+#search_button:active {
+	background-color: #e9e4e4;
 }

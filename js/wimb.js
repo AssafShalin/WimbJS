@@ -1,4 +1,4 @@
-var SCREEN_MODE = {'stations_select' : 0,'station_view':1};
+var SCREEN_MODE = {'stations_select' : 0,'station_view':1, 'search':2};
 var screenMode;
 var station_id;
 
@@ -24,19 +24,27 @@ function reload()
 	{
 		loadReports();
 	}
+	else if(window.screenMode == SCREEN_MODE.search)
+	{
+		loadReports();
+	}
 }
 function search()
 {
-
+	setTitle('בחר אוטובוס');
+	$('#search_bar').show();
+	$('#station_list').html("");
+	$('#search_text').val("");
+	window.screenMode = SCREEN_MODE.search;
+}
+function searchOnClick()
+{
+	station_id = $('#search_text').val();
+	loadReports();
 }
 function fave()
 {
 	getStations();
-}
-function showSearch()
-{
-	setTitle('חיפוש');
-	
 }
 function loadReports()
 {
@@ -80,6 +88,7 @@ function getStations()
 	window.screenMode = SCREEN_MODE.stations_select;
 	showLoader();
 	$.get('ajax/stations.php',function (stations) {
+		$('#search_bar').hide();
 		$('#station_list').html("");
 		setTitle('התחנות שלי');
 		for(i=0;i<stations.length;i++)
@@ -117,5 +126,24 @@ function templateLine(line)
 							eta  +
 						'</div>' +
 					'</td></tr>';
+
 	$('#station_list').append(template);
 }
+
+//uses document because document will be topmost level in bubbling
+$(document).on('touchmove',function(e){
+  e.preventDefault();
+});
+//uses body because jquery on events are called off of the element they are
+//added to, so bubbling would not work if we used document instead.
+$('body').on('touchstart','.scrollable',function(e) {
+  if (e.currentTarget.scrollTop === 0) {
+    e.currentTarget.scrollTop = 1;
+  } else if (e.currentTarget.scrollHeight === e.currentTarget.scrollTop + e.currentTarget.offsetHeight) {
+    e.currentTarget.scrollTop -= 1;
+  }
+});
+//prevents preventDefault from being called on document if it sees a scrollable div
+$('body').on('touchmove','.scrollable',function(e) {
+  e.stopPropagation();
+});
