@@ -31,11 +31,11 @@ function reload()
 }
 function search()
 {
-	setTitle('בחר אוטובוס');
 	$('#search_bar').show();
 	$('#station_list').html("");
 	$('#search_text').val("");
 	window.screenMode = SCREEN_MODE.search;
+	setTitle('בחר אוטובוס');
 }
 function searchOnClick()
 {
@@ -74,6 +74,8 @@ function setTitle(title)
 {
 	var titleText = $('#title');
 	titleText.text(title);
+
+	onWindowResize();
 }
 function showLoader()
 {
@@ -130,20 +132,22 @@ function templateLine(line)
 	$('#station_list').append(template);
 }
 
-//uses document because document will be topmost level in bubbling
+
+function onWindowResize()
+{
+	var top = $('#title').offset().top;
+	var offset = $('#title').outerHeight(true);
+	$('.stations_container').offset({top: top+offset});
+}
+
+$( window ).resize(function() {
+	onWindowResize();
+});
 $(document).on('touchmove',function(e){
-  e.preventDefault();
-});
-//uses body because jquery on events are called off of the element they are
-//added to, so bubbling would not work if we used document instead.
-$('body').on('touchstart','.scrollable',function(e) {
-  if (e.currentTarget.scrollTop === 0) {
-    e.currentTarget.scrollTop = 1;
-  } else if (e.currentTarget.scrollHeight === e.currentTarget.scrollTop + e.currentTarget.offsetHeight) {
-    e.currentTarget.scrollTop -= 1;
+  
+  var isTriggeredByStationContainer = $(e.target).parents('.stations_container').length > 0;
+  if(!isTriggeredByStationContainer)
+  {
+  	e.preventDefault();	
   }
-});
-//prevents preventDefault from being called on document if it sees a scrollable div
-$('body').on('touchmove','.scrollable',function(e) {
-  e.stopPropagation();
 });

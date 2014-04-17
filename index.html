@@ -34,9 +34,15 @@
 				<input id="search_text" type="text" pattern="[0-9]*" placeholder="הכנס מספר קו" maxlength="5"/>
 				<div id="search_button" class="button" onclick="searchOnClick();">חפש</div>
 			</div>
+			
 			<div class="station_title" id="title"></div>
-			<table class="stations" id="station_list">
-			</table>
+			<div class="stations_container scrollable">
+
+				<table class="stations" id="station_list">
+				</table>
+			</div>
+
+			
 		</div>
 		<div id="loader"></div>
 	</body>
