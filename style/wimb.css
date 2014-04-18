@@ -196,12 +196,12 @@ tr td{
 	font-size: 20px;
 	font-weight: bold;
 }
-#search_bar {
+#search-panel {
 	width: 90%;
 	margin: auto;
 	margin-top: 20px;
 }
-#search_text {
+#search-text {
 	float: right;
 	border: 3px #b5b5b5 solid;
 	background-color: #FFFFFF;
@@ -216,7 +216,7 @@ tr td{
 	padding-right: 0px;
 	height: 36px;
 }
-#search_button {
+#search-button {
 	height: 30px;
 	width: 33%;
 	border: 3px #b5b5b5 solid;

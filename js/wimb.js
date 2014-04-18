@@ -70,18 +70,21 @@ function TextBox(id)
 }
 function Button(id, onClick)
 {
+    var _this = this;
     this.id = id;
     this.onClick = onClick || function(button) {};
     //bind on click
-    $(id).click(function() { this.onClick(this);});
+    $(id).click(function() { _this.onClick(_this);});
 }
 
 function Label(id)
 {
     this.id = id;
-    this.getValue = function()      {   return $(this.id).html();    };
-    this.setValue = function(value) {   $(this.id).html(value);      };
-    this.clear    = function()      {   $(this.id).html('');         };
+    this.getValue    = function()      {   return $(this.id).html();                                        };
+    this.setValue    = function(value) {   $(this.id).html(value);                                          };
+    this.clear       = function()      {   $(this.id).html('');                                             };
+    this.offsetTop   = function()      {   return $(this.id).offset().top + $(this.id).outerHeight(true);   };
+
 }
 //</editor-fold>
 
@@ -111,7 +114,10 @@ function ListPanel()
     };
     this.setTitle = function (title) {
         this.listTitle.setValue(title);
-    }
+    };
+    this.resetListSize = function () {
+        $('.stations_container').offset({top: this.listTitle.offsetTop()});
+    };
 }
 function LoaderPanel()
 {
@@ -166,70 +172,87 @@ var ListBoxAdapterFactory = {
 //</editor-fold>
 
 function WimbData() {
+    var _this = this;
     this.fave = [];
     this.lastOperation = 0;
+    this.get = function(url, callback) {
+        console.log('requesting data from ' + url);
+        $.get(url, function (data){
+            console.log('data received.');
+            callback(data);
+        });
+    };
     this.onOperationFinish = function() {};
-
-
     this.fetchFaveStations = function (force) {
           if(this.fave.length == 0 || force)
           {
-              $.get('ajax/stations.php',function (stations) {
-                  this.fave = stations;
-                  this.lastOperation = this.fetchFaveStations;
-                  this.onOperationFinish(this.fave);
+              this.get('ajax/stations.php',function (stations) {
+                  _this.fave = stations;
+                  _this.lastOperation = _this.fetchFaveStations;
+                  _this.onOperationFinish(_this.fave);
               });
           }
     };
     this.fetchLineETA = function(station) {
-        $.get('ajax/info.php?stop_code=' + station.id, function (data) {
-           this.lastOperation = this.fetchLineETA;
-           this.onOperationFinish(data);
+        this.get('ajax/info.php?stop_code=' + station.id, function (data) {
+           _this.lastOperation = _this.fetchLineETA;
+           _this.onOperationFinish(data);
         });
     };
 }
 
 function WimbUI()
 {
-    this.dataSource = new WimbData();
-    this.toolbarPanel = new ToolbarPanel();
-    this.searchPanel = new SearchPanel();
-    this.listPanel = new ListPanel();
-    this.loader = new LoaderPanel();
-    this.construct = function() {
-        this.bindToolbarButtons();
-        this.dataSource.onOperationFinish = this.dataSourceOperationFinish;
+    var _this = this; //keep reference of this in delegate actions
+    _this.dataSource = new WimbData();
+    _this.toolbarPanel = new ToolbarPanel();
+    _this.searchPanel = new SearchPanel();
+    _this.listPanel = new ListPanel();
+    _this.loader = new LoaderPanel();
+
+    _this.construct = function() {
+        _this.bindToolbarButtons();
+        _this.dataSource.onOperationFinish = _this.dataSourceOperationFinish;
+        _this.showFave();
 
     };
-    this.dataSourceOperationFinish = function (data) {
+    _this.dataSourceOperationFinish = function (data) {
         for(i=0;i<data.length;i++) {
-            this.listPanel.listBox.add(ListBoxAdapterFactory.getAdapter(data[i]));
+            _this.listPanel.listBox.add(ListBoxAdapterFactory.getAdapter(data[i]));
         }
-        this.loader.hide();
+        _this.loader.hide();
     };
-    this.bindToolbarButtons = function () {
-        this.toolbarPanel.searchButton.onClick = this.showSearch;
-        this.toolbarPanel.faveButton.onClick = this.showFave;
-        this.toolbarPanel.refreshButton = this.refresh;
+    _this.bindToolbarButtons = function () {
+        _this.toolbarPanel.searchButton.onClick = _this.showSearch;
+        _this.toolbarPanel.faveButton.onClick = _this.showFave;
+        _this.toolbarPanel.refreshButton = _this.refresh;
     };
-    this.resetView = function () {
-        this.loader.hide();
-        this.searchPanel.clear();
-        this.listPanel.clear();
-        this.searchPanel.hide();
+    _this.resetView = function () {
+        _this.loader.hide();
+        _this.searchPanel.clear();
+        _this.listPanel.clear();
+        _this.searchPanel.hide();
     };
-    this.showSearch = function() {
-        this.resetView();
-        this.searchPanel.show();
+    _this.showSearch = function() {
+        _this.resetView();
+        _this.listPanel.setTitle('חיפוש');
+        _this.searchPanel.show();
+        _this.listPanel.resetListSize();
     };
-    this.showFave = function() {
-        this.resetView();
-        this.loader.show();
-        this.dataSource.fetchFaveStations();
+    _this.showFave = function() {
+        _this.resetView();
+        _this.loader.show();
+        _this.listPanel.setTitle('התחנות שלי');
+        _this.listPanel.resetListSize();
+        _this.dataSource.fetchFaveStations();
     };
-    this.refresh = function() {
-        this.resetView();
-        this.dataSource.lastOperation();
+    _this.refresh = function() {
+        _this.resetView();
+        _this.dataSource.lastOperation();
     };
-    this.construct();
+    _this.construct();
 }
+
+$(document).ready(function () {
+    var wimb = new WimbUI();
+});
