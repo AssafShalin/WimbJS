@@ -1,87 +1,187 @@
 <?php
+date_default_timezone_set('Asia/Jerusalem');
 class Line
 {
     public $id;
-    public $stationId;
     public $number;
     public $destination;
+    public $destinationDescription;
     public $operator;
     public $eta;
 }
-
 class Station
 {
     public $id;
     public $name;
     public $alias;
-    public $desc;
+    public $description;
 }
-
-class WimbServer 
+class HttpRequest
 {
-	private function request($url)
+	private $curl;
+	public function __construct($url)
 	{
-		$curl = curl_init($url);
-
-		curl_setopt_array($curl, array(
+		$this->curl = curl_init($url);
+		curl_setopt_array($this->curl, array(
 										CURLOPT_HTTPHEADER => array("X-ZUMO-APPLICATION: oaISskurhJtituuYtszOvQypeIAGeE85"),
-    									CURLOPT_RETURNTRANSFER => 1,
-    									CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 6.1; rv:27.0) Gecko/20100101 Firefox/27.0',
-    									CURLOPT_VERBOSE => 1
+										CURLOPT_RETURNTRANSFER => 1,
+										CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 6.1; rv:27.0) Gecko/20100101 Firefox/27.0',
+										CURLOPT_VERBOSE => 1
 										));
-		$resp = curl_exec($curl);
+		
 	}
-	public function getStationsListInfo($stations_array)
+	public function getResponse()
+	{
+		return curl_exec($this->curl);
+	}
+}
+class StationsQuery
+{
+
+	private $stationsArray;
+	public function __construct($stationsArray)
+	{
+		$this->stationsArray = $stationsArray;
+	}
+	private function createQuery()
 	{
 		$query = "";
-		foreach($stations_array as $key=>$val)
+		foreach($this->stationsArray as $key=>$stationId)
 		{
-			$query.= 'stop_code eq '. $val;
-			if($key+1 < count($stations_array)) $query.= ' or ';
+			$query.= 'stop_code eq '. $stationId;
+			if($key+1 < count($this->stationsArray)) $query.= ' or ';
 		}
 		$query = str_replace(' ', '%20', $query);
 		$url = 'http://wimb.azure-mobile.net/tables/AllStops?$filter=(' . $query . ')';
-		$resp = $this->request($url);
-		$resp = json_decode($resp);
-		foreach($resp as $k=>$s)
-		{
-			$s->stop_desc = str_replace('כתובת:', '', $s->stop_desc);
-		}
-		return $resp;
+		return $url;
 	}
-	public function getStationsETA($stop_code)
+	public function fetchStationsData()
 	{
-		$url = "http://54.243.87.53:8080/MyServlet3/Send?stop_code=". $stop_code ."&uuid=56c97211-09d1-421e-8109-aceb17feec7a";
-		$resp = $this->request($url);
-		$resp = preg_replace("/([sS]:|)/", "", $resp);
-		$a = simplexml_load_string($resp);
-		$a = $a->Body->GetStopMonitoringServiceResponse->Answer->StopMonitoringDelivery;
-		$prdata = array();
-		foreach($a->MonitoredStopVisit as $data)
+		$query = $this->createQuery();
+		$httpRequest = new HttpRequest($query);
+		$response = $httpRequest->getResponse();
+		$parsedResponse = $this->parseResponse($response);
+		return $parsedResponse;
+	}
+	private function convertJSONToStations($responseJSON)
+	{
+		$json = json_decode($responseJSON);
+		$stations = array();
+		foreach ($json as $stationData) {
+			$station = new Station();
+			$station->id = (int)$stationData->stop_code;
+			$station->name = (string)$stationData->stop_name;
+			$station->description = (string)$stationData->stop_desc;
+			$station->alias = "";
+			$stations[] = $station;
+		}
+		return $stations;
+	}
+	private function parseResponse($response)
+	{
+		$response = str_replace('כתובת:', '', $response);
+		$stations = $this->convertJSONToStations($response);
+		return $stations;
+	}
+	public function getStationsDestinationDescription($stationsData)
+	{
+		$destinationDescription = array();
+		foreach($stationsData as $station)
 		{
-			$c = new Station();
+			$destinationDescription[$station->id] = $station->description;
+		} 
+		return $destinationDescription;
+	}
+}
+class LinesETAQuery
+{
+	private $stationId;
+	private $station;
+	public function __construct($stationId)
+	{
+		$this->stationId = $stationId;
+	}
+	public function fetchLinesETA()
+	{
+		$response = $this->doRequest();
+		return $this->parseResponse($response);
+	}
+	private function doRequest()
+	{
+		$url = "http://54.243.87.53:8080/MyServlet3/Send?stop_code=". $this->stationId ."&uuid=56c97211-09d1-421e-8109-aceb17feec7a";
+		$httpRequest = new HttpRequest($url);
+		return $httpRequest->getResponse();
 
-			$c->stopId = (string)$data->ItemIdentifier;
-			$c->id = (string)$data->MonitoredVehicleJourney->LineRef;
-			$c->number = (string)$data->MonitoredVehicleJourney->PublishedLineName;
-			$c->operator = (string)$data->MonitoredVehicleJourney->OperatorRef;
-			$c->destination = (string)$data->MonitoredVehicleJourney->DestinationRef;
-			$c->eta = (string)$data->MonitoredVehicleJourney->MonitoredCall->ExpectedArrivalTime;
-			$c->eta = ceil((strtotime($c['arrive']) - time()) / 60);
-			$c->eta = ($c->eta<0)?$c->eta = 0;
-			$prdata[] = $c;
-		}   
-		return $prdata;
+	}
+	private function removeMalData($response)
+	{
+		return preg_replace("/([sS]:|)/", "", $response);
+
+	}
+	private function convertXMLToLines($xml)
+	{
+		$xml = $xml->Body->GetStopMonitoringServiceResponse->Answer->StopMonitoringDelivery->MonitoredStopVisit;
+
+		$lines = array();
+		foreach($xml as $lineData)
+		{
+			$line = new Line();
+			//$line->stopId = (string)$lineData->ItemIdentifier;
+			$line->id = (string)$lineData->MonitoredVehicleJourney->LineRef;
+			$line->number = (string)$lineData->MonitoredVehicleJourney->PublishedLineName;
+			$line->operator = (string)$lineData->MonitoredVehicleJourney->OperatorRef;
+			$line->destination = (string)$lineData->MonitoredVehicleJourney->DestinationRef;
+			$line->eta = (string)$lineData->MonitoredVehicleJourney->MonitoredCall->ExpectedArrivalTime;
+			$line->eta = ceil((strtotime($line->eta) - time()) / 60);
+			$lines[] = $line;
+		}
+		$lines = $this->fetchDestinationDescription($lines);
+		return $lines;
+	}
+	private function loadStationData($stationsData)
+	{	
+		foreach($stationsData as $station)
+			if($station->id == $this->stationId) return $station;
+	}
+	private function fetchDestinationDescription(array $lines)
+	{
+		$query = $this->createDestinationDescriptionQuery($lines);
+		$stationsData = $query->fetchStationsData();
+		$this->station = $this->loadStationData($stationsData);
+		$destinationDescription = $query->getStationsDestinationDescription($stationsData);
+		$lines = $this->assosiateLineWithDestinationDescription($lines,$destinationDescription);
+		return $lines;
+	}
+	private function assosiateLineWithDestinationDescription($lines,$destinationDescription)
+	{
+		foreach($lines as $key => $line)
+		{
+			$lines[$key]->destinationDescription = $destinationDescription[$line->destination];
+		}
+		return $lines;
+	}
+	private function createDestinationDescriptionQuery(array $lines)
+	{
+		$stationIds = array();
+		foreach($lines as $line)
+		{
+			$stationIds[] = $line->destination;
+		}
+		$stationIds[] = $this->stationId;
+		$stationsQuery = new StationsQuery($stationIds);
+		return $stationsQuery;
+	}
+	public function getStation()
+	{
+		return $this->station;
+	}
+	private function parseResponse($response)
+	{
+		$response = $this->removeMalData($response);
+		$xml = simplexml_load_string($response);
+		$lines = $this->convertXMLToLines($xml);
+		return $lines;
 	}
 
 }
-
-
 header('Content-Type: application/json; charset=utf-8');
-date_default_timezone_set('Asia/Jerusalem');
-
-
-function getFave()
-{
-	return json_decode(file_get_contents('../stations.json'));
-}
