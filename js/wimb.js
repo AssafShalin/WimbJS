@@ -17,18 +17,21 @@ var stationTemplate = '<div class="station_container" id="{0}"><div class="stati
 //<editor-fold desc="Model-Objects">
 function Line()
 {
+    this.__type__ = 'Line';
     this.id = 0;
     this.number = 0;
-    this.description = '';
+    this.destination = 0;
+    this.destinationDescription = '';
     this.operator = 0;
     this.eta = 0;
 }
 function Station()
 {
+    this.__type__ = 'Station';
     this.id = 0;
     this.name = '';
     this.alias = '';
-    this.desc = '';
+    this.description = '';
 }
 //</editor-fold>
 
@@ -42,13 +45,12 @@ function ListBox(id)
      */
     this.rows = [];
     this.clear = function () {
-        $(this.id).html('');
         this.rows = [];
     };
     this.render = function() {
-        this.clear();
+        $(this.id).html('');
         for(i=0;i<this.rows.length;i++) {
-            var content = '<tr><td>' + rows[i].render() + '</td></tr>';
+            var content = '<tr><td>' + this.rows[i].render() + '</td></tr>';
             $(this.id).append(content);
         }
     };
@@ -132,11 +134,12 @@ function StationListBoxRowAdapter(station)
 {
     this.station = station;
     var self = new ListBoxRow();
+    var _this = this;
     self.render = function () {
-        stationTemplate.format( this.station.id,
-                                this.station.name,
-                                this.station.desc,
-                                this.station.id);
+        return stationTemplate.format( _this.station.id,
+                                _this.station.name,
+                                _this.station.description,
+                                _this.station.id);
     };
 
     return self;
@@ -145,19 +148,20 @@ function LineListBoxRowAdapter(line)
 {
     this.line = line;
     var self = new ListBoxRow();
+    var _this = this;
     self.render = function () {
-        lineTemplate.format(this.line.id,
-                            this.line.operator,
-                            this.line.name,
-                            this.line.desc,
-                            this.line.eta);
+        return lineTemplate.format(_this.line.id,
+                            _this.line.operator,
+                            _this.line.name,
+                            _this.line.description,
+                            _this.line.eta);
     };
 
     return self;
 }
 var ListBoxAdapterFactory = {
     getAdapter: function (object) {
-        var type = Object.prototype.toString(object);
+        var type = object.__type__;
         if(type==='Line') {
             return new LineListBoxRowAdapter(object);
         }
@@ -220,6 +224,7 @@ function WimbUI()
         for(i=0;i<data.length;i++) {
             _this.listPanel.listBox.add(ListBoxAdapterFactory.getAdapter(data[i]));
         }
+        _this.listPanel.listBox.render();
         _this.loader.hide();
     };
     _this.bindToolbarButtons = function () {

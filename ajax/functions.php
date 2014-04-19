@@ -2,6 +2,7 @@
 date_default_timezone_set('Asia/Jerusalem');
 class Line
 {
+    public $__type__ = 'Line';
     public $id;
     public $number;
     public $destination;
@@ -11,6 +12,7 @@ class Line
 }
 class Station
 {
+    public $__type__ = 'Station';
     public $id;
     public $name;
     public $alias;
