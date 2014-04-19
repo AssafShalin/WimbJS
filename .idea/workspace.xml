@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6543d922-1260-40c9-accb-39485466d579" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ajax/functions.php" afterPath="$PROJECT_DIR$/ajax/functions.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/wimb.js" afterPath="$PROJECT_DIR$/js/wimb.js" />
     </list>
     <ignored path="WimbJS.iws" />
@@ -28,19 +29,46 @@
       <file leaf-file-name="wimb.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/wimb.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.09054054" vertical-offset="1" max-vertical-offset="1768">
-              <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.36756757" vertical-offset="0" max-vertical-offset="740">
+              <caret line="316" column="3" selection-start-line="316" selection-start-column="3" selection-end-line="316" selection-end-column="3" />
               <folding>
-                <element signature="e#728#764#0" expanded="false" />
-                <element signature="e#1113#1147#0" expanded="false" />
-                <element signature="n#!!block;n#ListBox#0" expanded="false" />
+                <element signature="e#929#965#0" expanded="false" />
+                <element signature="e#1307#1341#0" expanded="false" />
                 <element signature="n#!!block;n#ListBoxRow#0" expanded="false" />
                 <element signature="n#!!block;n#Button#0" expanded="false" />
                 <element signature="n#!!block;n#Label#0" expanded="false" />
-                <element signature="e#3355#3387#0" expanded="false" />
-                <element signature="e#4534#4568#0" expanded="false" />
-                <marker date="1397923852216" expanded="false" signature="358:380" placeholder="..." />
+                <element signature="e#3504#3536#0" expanded="false" />
+                <element signature="e#4780#4814#0" expanded="false" />
+                <element signature="n#!!block;n#WimbData#0" expanded="false" />
+                <element signature="n#!!block;n#WimbUI#0" expanded="false" />
+                <element signature="e#9746#9778#0" expanded="false" />
+                <marker date="1397926594277" expanded="true" signature="358:380" placeholder="..." />
+                <marker date="1397926594277" expanded="true" signature="358:407" placeholder="..." />
+                <marker date="1397926594277" expanded="true" signature="358:403" placeholder="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wimb.old.js" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/js/wimb.old.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1946" max-vertical-offset="2686">
+              <caret line="118" column="4" selection-start-line="118" selection-start-column="4" selection-end-line="121" selection-end-column="86" />
+              <folding>
+                <marker date="1397904939240" expanded="true" signature="2109:2157" placeholder="..." />
+                <marker date="1397904939240" expanded="true" signature="2113:2157" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wimb.css" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/style/wimb.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4352">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -60,6 +88,7 @@
       <list>
         <option value="$PROJECT_DIR$/ajax/functions.php" />
         <option value="$PROJECT_DIR$/style/wimb.css" />
+        <option value="$PROJECT_DIR$/js/wimb.old.js" />
         <option value="$PROJECT_DIR$/js/wimb.js" />
       </list>
     </option>
@@ -237,26 +266,41 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/style/wimb.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5617816" vertical-offset="2414" max-vertical-offset="4352">
-          <caret line="165" column="1" selection-start-line="165" selection-start-column="1" selection-end-line="165" selection-end-column="1" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4352">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/wimb.old.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1946" max-vertical-offset="2686">
+          <caret line="118" column="4" selection-start-line="118" selection-start-column="4" selection-end-line="121" selection-end-column="86" />
+          <folding>
+            <marker date="1397904939240" expanded="true" signature="2109:2157" placeholder="..." />
+            <marker date="1397904939240" expanded="true" signature="2113:2157" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/js/wimb.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.09054054" vertical-offset="1" max-vertical-offset="1768">
-          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.36756757" vertical-offset="0" max-vertical-offset="740">
+          <caret line="316" column="3" selection-start-line="316" selection-start-column="3" selection-end-line="316" selection-end-column="3" />
           <folding>
-            <element signature="e#728#764#0" expanded="false" />
-            <element signature="e#1113#1147#0" expanded="false" />
-            <element signature="n#!!block;n#ListBox#0" expanded="false" />
+            <element signature="e#929#965#0" expanded="false" />
+            <element signature="e#1307#1341#0" expanded="false" />
             <element signature="n#!!block;n#ListBoxRow#0" expanded="false" />
             <element signature="n#!!block;n#Button#0" expanded="false" />
             <element signature="n#!!block;n#Label#0" expanded="false" />
-            <element signature="e#3355#3387#0" expanded="false" />
-            <element signature="e#4534#4568#0" expanded="false" />
-            <marker date="1397923852216" expanded="false" signature="358:380" placeholder="..." />
+            <element signature="e#3504#3536#0" expanded="false" />
+            <element signature="e#4780#4814#0" expanded="false" />
+            <element signature="n#!!block;n#WimbData#0" expanded="false" />
+            <element signature="n#!!block;n#WimbUI#0" expanded="false" />
+            <element signature="e#9746#9778#0" expanded="false" />
+            <marker date="1397926594277" expanded="true" signature="358:380" placeholder="..." />
+            <marker date="1397926594277" expanded="true" signature="358:407" placeholder="..." />
+            <marker date="1397926594277" expanded="true" signature="358:403" placeholder="..." />
           </folding>
         </state>
       </provider>

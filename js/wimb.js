@@ -9,9 +9,13 @@ String.prototype.format = function() {
     return s;
 };
 //id,operator,name,desc,eta
-var lineTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url("img/operators/{1}.png");"></div><div class="station_name">{2}</div><div class="station_location">{3}</div>{4}</div>';
+var lineTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url(\'img/operators/{1}.png\');"></div><div class="station_name">{2}</div><div class="station_location">{3}</div>{4}</div>';
+var etaNowTemplate = '<div class="line_time">מגיע <span class="line_min">עכשיו</span></div>';
+var etaTimeTemplate = '<div class="line_time">מגיע בעוד <span class="line_min">{0}</span> דק\'</div>';
+
 //id,name,desc,id
 var stationTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מספר תחנה {3}</div></div>';
+
 //</editor-fold>
 
 //<editor-fold desc="Model-Objects">
@@ -21,7 +25,7 @@ function Line()
     this.id = 0;
     this.number = 0;
     this.destination = 0;
-    this.destinationDescription = '';
+    this.destinationName = '';
     this.operator = 0;
     this.eta = 0;
 }
@@ -39,9 +43,7 @@ function Station()
 function ListBox(id)
 {
     this.id = id;
-    this.onRowClick = function (row) {
-        alert(row.station.description);
-    };
+    this.onRowClick = function (row) {};
     /**
      *
      * @type {ListBoxRow}
@@ -133,6 +135,9 @@ function ListPanel()
 {
     this.listBox = new ListBox('#station-list');
     this.listTitle = new Label('#station-title');
+    this.bindListClickAction = function(action) {
+      this.listBox.onRowClick = action;
+    };
     this.clear = function () {
         this.listBox.clear();
         this.listTitle.clear();
@@ -175,11 +180,16 @@ function LineListBoxRowAdapter(line)
     var _this = this;
     self._this = this;
     self.render = function () {
+        var etaTemplate;
+        if(line.eta > 1)
+            etaTemplate = etaTimeTemplate.format(_this.line.eta);
+        else
+            etaTemplate = etaNowTemplate;
         return lineTemplate.format(_this.line.id,
                             _this.line.operator,
-                            _this.line.name,
-                            _this.line.description,
-                            _this.line.eta);
+                            _this.line.number,
+                            _this.line.destinationName,
+                            etaTemplate);
     };
 
     return self;
@@ -200,19 +210,26 @@ var ListBoxAdapterFactory = {
 };
 //</editor-fold>
 
-function WimbData() {
+function WimbData()
+{
     var _this = this;
     this.fave = [];
     this.lastOperation = 0;
+    this.currentTitle = '';
     this.get = function(url, callback) {
         console.log('requesting data from ' + url);
-        $.get(url, function (data){
+        var getObj = $.get(url, function (data){
             console.log('data received.');
             callback(data);
+        })
+            .fail(function () {
+           alert('Could not connect to server, please try again later.');
         });
     };
+    this.getCurrentTitle = function() {return this.currentTitle;};
     this.onOperationFinish = function() {};
     this.fetchFaveStations = function (force) {
+        this.currentTitle = 'התחנות שלי';
           if(this.fave.length == 0 || force) {
               this.get('ajax/stations.php',function (stations) {
                   _this.fave = stations;
@@ -221,13 +238,15 @@ function WimbData() {
               });
           }
           else {
+
               this.onOperationFinish(this.fave);
           }
     };
-    this.fetchLineETA = function(station) {
-        this.get('ajax/info.php?stop_code=' + station.id, function (data) {
+    this.fetchLineETA = function(stationId) {
+        this.get('ajax/lines.php?stationId=' + stationId, function (data) {
            _this.lastOperation = _this.fetchLineETA;
-           _this.onOperationFinish(data);
+           _this.currentTitle = data.station.name;
+           _this.onOperationFinish(data.eta);
         });
     };
 }
@@ -248,6 +267,8 @@ function WimbUI()
 
     };
     _this.dataSourceOperationFinish = function (data) {
+        _this.listPanel.setTitle(_this.dataSource.getCurrentTitle());
+        _this.listPanel.resetListSize();
         for(i=0;i<data.length;i++) {
             _this.listPanel.listBox.add(ListBoxAdapterFactory.getAdapter(data[i]));
         }
@@ -270,17 +291,23 @@ function WimbUI()
         _this.listPanel.setTitle('חיפוש');
         _this.searchPanel.show();
         _this.listPanel.resetListSize();
+        _this.listPanel.bindListClickAction(false);
     };
     _this.showFave = function() {
         _this.resetView();
         _this.loader.show();
-        _this.listPanel.setTitle('התחנות שלי');
-        _this.listPanel.resetListSize();
         _this.dataSource.fetchFaveStations();
+        _this.listPanel.bindListClickAction(function (row) { _this.loadStationEta(row.station.id)});
     };
     _this.refresh = function() {
         _this.resetView();
         _this.dataSource.lastOperation();
+    };
+    _this.loadStationEta = function(stationId)
+    {
+        _this.resetView();
+        _this.loader.show();
+        _this.dataSource.fetchLineETA(stationId);
     };
     _this.construct();
 }

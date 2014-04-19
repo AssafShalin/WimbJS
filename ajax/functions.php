@@ -6,7 +6,7 @@ class Line
     public $id;
     public $number;
     public $destination;
-    public $destinationDescription;
+    public $destinationName;
     public $operator;
     public $eta;
 }
@@ -85,14 +85,14 @@ class StationsQuery
 		$stations = $this->convertJSONToStations($response);
 		return $stations;
 	}
-	public function getStationsDestinationDescription($stationsData)
+	public function getStationsDestinationName($stationsData)
 	{
-		$destinationDescription = array();
+		$destinationName = array();
 		foreach($stationsData as $station)
 		{
-			$destinationDescription[$station->id] = $station->description;
+			$destinationName[$station->id] = $station->name;
 		} 
-		return $destinationDescription;
+		return $destinationName;
 	}
 }
 class LinesETAQuery
@@ -137,7 +137,7 @@ class LinesETAQuery
 			$line->eta = ceil((strtotime($line->eta) - time()) / 60);
 			$lines[] = $line;
 		}
-		$lines = $this->fetchDestinationDescription($lines);
+		$lines = $this->fetchDestinationName($lines);
 		return $lines;
 	}
 	private function loadStationData($stationsData)
@@ -145,24 +145,24 @@ class LinesETAQuery
 		foreach($stationsData as $station)
 			if($station->id == $this->stationId) return $station;
 	}
-	private function fetchDestinationDescription(array $lines)
+	private function fetchDestinationName(array $lines)
 	{
-		$query = $this->createDestinationDescriptionQuery($lines);
+		$query = $this->createDestinationNameQuery($lines);
 		$stationsData = $query->fetchStationsData();
 		$this->station = $this->loadStationData($stationsData);
-		$destinationDescription = $query->getStationsDestinationDescription($stationsData);
-		$lines = $this->assosiateLineWithDestinationDescription($lines,$destinationDescription);
+		$destinationName = $query->getStationsDestinationName($stationsData);
+		$lines = $this->assosiateLineWithDestinationName($lines,$destinationName);
 		return $lines;
 	}
-	private function assosiateLineWithDestinationDescription($lines,$destinationDescription)
+	private function assosiateLineWithDestinationName($lines,$destinationName)
 	{
 		foreach($lines as $key => $line)
 		{
-			$lines[$key]->destinationDescription = $destinationDescription[$line->destination];
+			$lines[$key]->destinationName = $destinationName[$line->destination];
 		}
 		return $lines;
 	}
-	private function createDestinationDescriptionQuery(array $lines)
+	private function createDestinationNameQuery(array $lines)
 	{
 		$stationIds = array();
 		foreach($lines as $line)
