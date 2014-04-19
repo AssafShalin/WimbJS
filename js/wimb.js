@@ -39,6 +39,9 @@ function Station()
 function ListBox(id)
 {
     this.id = id;
+    this.onRowClick = function (row) {
+        alert(row.station.description);
+    };
     /**
      *
      * @type {ListBoxRow}
@@ -51,17 +54,36 @@ function ListBox(id)
     this.render = function() {
         $(this.id).html('');
         for(i=0;i<this.rows.length;i++) {
-            var content = '<tr><td>' + this.rows[i].render() + '</td></tr>';
+            var id = 'table-' + this.id.replace('#','') + '-row-' + i;
+            var content = '<tr id="' + id + '"><td>' + this.rows[i].render() + '</td></tr>';
             $(this.id).append(content);
+            this.rows[i].setItemId(id);
+            this.rows[i].onClick = this.onRowClick;
         }
     };
     this.add = function (rowAdapter) {
+        rowAdapter.onClick = this.onRowClick;
         this.rows.push(rowAdapter);
-    }
+    };
+    this.rowClickHandler = function (row) {
+        this.onRowClick(row);
+    };
 }
 function ListBoxRow()
 {
+   this.id = 0;
+   this.onClick = function () {};
    this.render = function () { return ''; };
+   this._this = this;
+   this.setItemId = function (id) {
+     this.id= '#' + id;
+       var _this = this;
+     $(this.id).click(function() {
+         _this.onClick(_this._this);
+     });
+   };
+
+   //bind to this item.
 }
 function TextBox(id)
 {
@@ -136,6 +158,7 @@ function StationListBoxRowAdapter(station)
     this.station = station;
     var self = new ListBoxRow();
     var _this = this;
+    self._this = this;
     self.render = function () {
         return stationTemplate.format( _this.station.id,
                                 _this.station.name,
@@ -150,6 +173,7 @@ function LineListBoxRowAdapter(line)
     this.line = line;
     var self = new ListBoxRow();
     var _this = this;
+    self._this = this;
     self.render = function () {
         return lineTemplate.format(_this.line.id,
                             _this.line.operator,
