@@ -46,6 +46,7 @@ function ListBox(id)
     this.rows = [];
     this.clear = function () {
         this.rows = [];
+        this.render();
     };
     this.render = function() {
         $(this.id).html('');
@@ -188,13 +189,15 @@ function WimbData() {
     };
     this.onOperationFinish = function() {};
     this.fetchFaveStations = function (force) {
-          if(this.fave.length == 0 || force)
-          {
+          if(this.fave.length == 0 || force) {
               this.get('ajax/stations.php',function (stations) {
                   _this.fave = stations;
                   _this.lastOperation = _this.fetchFaveStations;
                   _this.onOperationFinish(_this.fave);
               });
+          }
+          else {
+              this.onOperationFinish(this.fave);
           }
     };
     this.fetchLineETA = function(station) {
