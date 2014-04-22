@@ -42,6 +42,7 @@ function Station()
 //<editor-fold desc="UI-Controls">
 function ListBox(id)
 {
+    var _this = this;
     this.id = id;
     this.onRowClick = function (row) {};
     /**
@@ -60,15 +61,15 @@ function ListBox(id)
             var content = '<tr id="' + id + '"><td>' + this.rows[i].render() + '</td></tr>';
             $(this.id).append(content);
             this.rows[i].setItemId(id);
-            this.rows[i].onClick = this.onRowClick;
+            this.rows[i].onClick = this.rowClickHandler;
         }
     };
     this.add = function (rowAdapter) {
-        rowAdapter.onClick = this.onRowClick;
+        rowAdapter.onClick = this.rowClickHandler;
         this.rows.push(rowAdapter);
     };
     this.rowClickHandler = function (row) {
-        this.onRowClick(row);
+        _this.onRowClick(row);
     };
 }
 function ListBoxRow()
@@ -81,7 +82,8 @@ function ListBoxRow()
      this.id= '#' + id;
        var _this = this;
      $(this.id).click(function() {
-         _this.onClick(_this._this);
+         if(_this.onClick !== false)
+            _this.onClick(_this._this);
      });
    };
 
@@ -278,7 +280,7 @@ function WimbUI()
     _this.bindToolbarButtons = function () {
         _this.toolbarPanel.searchButton.onClick = _this.showSearch;
         _this.toolbarPanel.faveButton.onClick = _this.showFave;
-        _this.toolbarPanel.refreshButton = _this.refresh;
+        _this.toolbarPanel.refreshButton.onClick = _this.refresh;
     };
     _this.resetView = function () {
         _this.loader.hide();
@@ -291,7 +293,7 @@ function WimbUI()
         _this.listPanel.setTitle('חיפוש');
         _this.searchPanel.show();
         _this.listPanel.resetListSize();
-        _this.listPanel.bindListClickAction(false);
+        _this.listPanel.bindListClickAction(function () {});
     };
     _this.showFave = function() {
         _this.resetView();
@@ -308,6 +310,7 @@ function WimbUI()
         _this.resetView();
         _this.loader.show();
         _this.dataSource.fetchLineETA(stationId);
+        _this.listPanel.bindListClickAction(function () {});
     };
     _this.construct();
 }

@@ -186,4 +186,38 @@ class LinesETAQuery
 	}
 
 }
+
+function getMockStationsData($stations)
+{
+	$stationArray = array();
+	foreach($stations as $key => $stationId)
+	{
+		$station = new Station();
+		$station->id = $stationId;
+    	$station->name = 'תחנה מדומה' . $key;
+    	$station->alias = '';
+    	$station->description = 'כתובת מדומה';
+		$stationArray[] = $station;
+	}
+	return $stationArray;
+}
+function getMockLines($stationId)
+{
+	$lineArray = array();
+
+	for($i=0;$i<15;$i++)
+	{
+		$line = new Line();
+		$line->id = $i;
+	    $line->number = 'קו מדומה ' . $i;
+	    $line->destination = $i;
+	    $line->destinationName = 'יעד מדומה ' . $i;
+	    $line->operator = 3;
+	    $line->eta = $i+3;
+	    $lineArray[] = $line;
+	}
+	return $lineArray;
+
+}
+
 header('Content-Type: application/json; charset=utf-8');

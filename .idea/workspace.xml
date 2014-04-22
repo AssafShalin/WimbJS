@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="6543d922-1260-40c9-accb-39485466d579" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ajax/functions.php" afterPath="$PROJECT_DIR$/ajax/functions.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ajax/lines.php" afterPath="$PROJECT_DIR$/ajax/lines.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ajax/stations.php" afterPath="$PROJECT_DIR$/ajax/stations.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/wimb.js" afterPath="$PROJECT_DIR$/js/wimb.js" />
     </list>
     <ignored path="WimbJS.iws" />
@@ -29,22 +31,19 @@
       <file leaf-file-name="wimb.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/wimb.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.36756757" vertical-offset="0" max-vertical-offset="740">
-              <caret line="316" column="3" selection-start-line="316" selection-start-column="3" selection-end-line="316" selection-end-column="3" />
+            <state vertical-scroll-proportion="0.06882022" vertical-offset="1821" max-vertical-offset="2873">
+              <caret line="264" column="6" selection-start-line="264" selection-start-column="6" selection-end-line="264" selection-end-column="6" />
               <folding>
                 <element signature="e#929#965#0" expanded="false" />
-                <element signature="e#1307#1341#0" expanded="false" />
                 <element signature="n#!!block;n#ListBoxRow#0" expanded="false" />
                 <element signature="n#!!block;n#Button#0" expanded="false" />
                 <element signature="n#!!block;n#Label#0" expanded="false" />
-                <element signature="e#3504#3536#0" expanded="false" />
-                <element signature="e#4780#4814#0" expanded="false" />
+                <element signature="e#4853#4887#0" expanded="false" />
                 <element signature="n#!!block;n#WimbData#0" expanded="false" />
-                <element signature="n#!!block;n#WimbUI#0" expanded="false" />
-                <element signature="e#9746#9778#0" expanded="false" />
-                <marker date="1397926594277" expanded="true" signature="358:380" placeholder="..." />
-                <marker date="1397926594277" expanded="true" signature="358:407" placeholder="..." />
-                <marker date="1397926594277" expanded="true" signature="358:403" placeholder="..." />
+                <element signature="e#9897#9929#0" expanded="false" />
+                <marker date="1398168831796" expanded="true" signature="358:380" placeholder="..." />
+                <marker date="1398168831796" expanded="true" signature="358:407" placeholder="..." />
+                <marker date="1398168831796" expanded="true" signature="358:403" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -53,7 +52,7 @@
       <file leaf-file-name="wimb.old.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/wimb.old.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1946" max-vertical-offset="2686">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2006" max-vertical-offset="2686">
               <caret line="118" column="4" selection-start-line="118" selection-start-column="4" selection-end-line="121" selection-end-column="86" />
               <folding>
                 <marker date="1397904939240" expanded="true" signature="2109:2157" placeholder="..." />
@@ -209,16 +208,16 @@
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21625" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32978722" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -245,14 +244,53 @@
     </option>
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="2" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/js/wimb.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
+          <caret line="316" column="3" selection-start-line="316" selection-start-column="3" selection-end-line="316" selection-end-column="3" />
+          <folding>
+            <element signature="e#929#965#0" expanded="false" />
+            <element signature="n#!!block;n#ListBoxRow#0" expanded="false" />
+            <element signature="n#!!block;n#Button#0" expanded="false" />
+            <element signature="n#!!block;n#Label#0" expanded="false" />
+            <element signature="e#4853#4887#0" expanded="false" />
+            <element signature="n#!!block;n#WimbData#0" expanded="false" />
+            <element signature="e#9897#9929#0" expanded="false" />
+            <marker date="1398168831796" expanded="true" signature="358:380" placeholder="..." />
+            <marker date="1398168831796" expanded="true" signature="358:407" placeholder="..." />
+            <marker date="1398168831796" expanded="true" signature="358:403" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/wimb.old.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2006" max-vertical-offset="2686">
+          <caret line="118" column="4" selection-start-line="118" selection-start-column="4" selection-end-line="121" selection-end-column="86" />
+          <folding>
+            <marker date="1397904939240" expanded="true" signature="2109:2157" placeholder="..." />
+            <marker date="1397904939240" expanded="true" signature="2113:2157" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/style/wimb.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4352">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ajax/functions.php">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.09728183" vertical-offset="17" max-vertical-offset="3298">
           <caret line="5" column="15" selection-start-line="5" selection-start-column="15" selection-end-line="5" selection-end-column="15" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -260,7 +298,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.072961375" vertical-offset="0" max-vertical-offset="699">
           <caret line="3" column="46" selection-start-line="3" selection-start-column="46" selection-end-line="3" selection-end-column="46" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -285,22 +322,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/wimb.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.36756757" vertical-offset="0" max-vertical-offset="740">
-          <caret line="316" column="3" selection-start-line="316" selection-start-column="3" selection-end-line="316" selection-end-column="3" />
+        <state vertical-scroll-proportion="0.06882022" vertical-offset="1821" max-vertical-offset="2873">
+          <caret line="264" column="6" selection-start-line="264" selection-start-column="6" selection-end-line="264" selection-end-column="6" />
           <folding>
             <element signature="e#929#965#0" expanded="false" />
-            <element signature="e#1307#1341#0" expanded="false" />
             <element signature="n#!!block;n#ListBoxRow#0" expanded="false" />
             <element signature="n#!!block;n#Button#0" expanded="false" />
             <element signature="n#!!block;n#Label#0" expanded="false" />
-            <element signature="e#3504#3536#0" expanded="false" />
-            <element signature="e#4780#4814#0" expanded="false" />
+            <element signature="e#4853#4887#0" expanded="false" />
             <element signature="n#!!block;n#WimbData#0" expanded="false" />
-            <element signature="n#!!block;n#WimbUI#0" expanded="false" />
-            <element signature="e#9746#9778#0" expanded="false" />
-            <marker date="1397926594277" expanded="true" signature="358:380" placeholder="..." />
-            <marker date="1397926594277" expanded="true" signature="358:407" placeholder="..." />
-            <marker date="1397926594277" expanded="true" signature="358:403" placeholder="..." />
+            <element signature="e#9897#9929#0" expanded="false" />
+            <marker date="1398168831796" expanded="true" signature="358:380" placeholder="..." />
+            <marker date="1398168831796" expanded="true" signature="358:407" placeholder="..." />
+            <marker date="1398168831796" expanded="true" signature="358:403" placeholder="..." />
           </folding>
         </state>
       </provider>
