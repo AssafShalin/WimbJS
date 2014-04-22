@@ -6,7 +6,7 @@ $stationId = $_GET['stationId'];
 //$etaQuery = new LinesETAQuery($stationId);
 //$eta = $etaQuery->fetchLinesETA();
 //$stationInfo = $etaQuery->getStation();
-$stationInfo = getMockStationsData(array('443211'));
+$stationInfo = getMockStationsData(array('443211'))[0];
 $eta = getMockLines('234234');
 $results = array('station' => $stationInfo, 'eta'=> $eta);
 echo json_encode($results);

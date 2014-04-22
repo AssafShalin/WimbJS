@@ -126,12 +126,21 @@ function ToolbarPanel()
 }
 function SearchPanel()
 {
+    var _this = this;
     this.id = '#search-panel';
-    this.searchTextBox = new TextBox('search-text');
-    this.searchButton = new Button('search-button');
+    this.searchTextBox = new TextBox('#search-text');
+    this.searchButton = new Button('#search-button');
+    this.onSearchEvent = function (searchQuery) {};
     this.show = function  ()    { $(this.id).show(); };
     this.hide = function  ()    { $(this.id).hide(); };
     this.clear = function ()    { this.searchTextBox.clear(); };
+    this.searchButton.onClick = function () {
+        var searchQuery = _this.searchTextBox.getValue();
+        _this.onSearchEvent(searchQuery);
+    }
+    this.bindOnSearchEvent = function (event) {
+      this.onSearchEvent = event;
+    };
 }
 function ListPanel()
 {
@@ -197,7 +206,7 @@ function LineListBoxRowAdapter(line)
     return self;
 }
 var ListBoxAdapterFactory = {
-    getAdapter: function (object) {
+    createAdapter: function (object) {
         var type = object.__type__;
         if(type==='Line') {
             return new LineListBoxRowAdapter(object);
@@ -217,6 +226,7 @@ function WimbData()
     var _this = this;
     this.fave = [];
     this.lastOperation = 0;
+    this.lastOperationArguments = [];
     this.currentTitle = '';
     this.get = function(url, callback) {
         console.log('requesting data from ' + url);
@@ -231,26 +241,36 @@ function WimbData()
     this.getCurrentTitle = function() {return this.currentTitle;};
     this.onOperationFinish = function() {};
     this.fetchFaveStations = function (force) {
-        this.currentTitle = 'התחנות שלי';
+        this.lastOperation = _this.fetchFaveStations;
+        this.lastOperationArguments = [];
+        this.currentTitle = 'התחנות שלי'
           if(this.fave.length == 0 || force) {
               this.get('ajax/stations.php',function (stations) {
                   _this.fave = stations;
-                  _this.lastOperation = _this.fetchFaveStations;
                   _this.onOperationFinish(_this.fave);
               });
           }
           else {
-
+              console.log('stations are loaded to memory');
               this.onOperationFinish(this.fave);
           }
     };
     this.fetchLineETA = function(stationId) {
+        this.lastOperation = _this.fetchLineETA;
+        this.lastOperationArguments = stationId;
         this.get('ajax/lines.php?stationId=' + stationId, function (data) {
-           _this.lastOperation = _this.fetchLineETA;
+
            _this.currentTitle = data.station.name;
            _this.onOperationFinish(data.eta);
         });
     };
+    this.invokeLastOperation = function() {
+        _this.lastOperation(_this.lastOperationArguments);
+    }
+    this.resetLastOperation = function () {
+        _this.lastOperation = 0;
+        _this.lastOperationArguments = [];
+    }
 }
 
 function WimbUI()
@@ -272,7 +292,7 @@ function WimbUI()
         _this.listPanel.setTitle(_this.dataSource.getCurrentTitle());
         _this.listPanel.resetListSize();
         for(i=0;i<data.length;i++) {
-            _this.listPanel.listBox.add(ListBoxAdapterFactory.getAdapter(data[i]));
+            _this.listPanel.listBox.add(ListBoxAdapterFactory.createAdapter(data[i]));
         }
         _this.listPanel.listBox.render();
         _this.loader.hide();
@@ -290,8 +310,12 @@ function WimbUI()
     };
     _this.showSearch = function() {
         _this.resetView();
-        _this.listPanel.setTitle('חיפוש');
+        _this.dataSource.resetLastOperation();
+
         _this.searchPanel.show();
+        _this.searchPanel.bindOnSearchEvent(function (searchQuery) { _this.loadStationEta(searchQuery);});
+
+        _this.listPanel.setTitle('חיפוש');
         _this.listPanel.resetListSize();
         _this.listPanel.bindListClickAction(function () {});
     };
@@ -302,12 +326,12 @@ function WimbUI()
         _this.listPanel.bindListClickAction(function (row) { _this.loadStationEta(row.station.id)});
     };
     _this.refresh = function() {
-        _this.resetView();
-        _this.dataSource.lastOperation();
+        _this.listPanel.clear();
+        _this.dataSource.invokeLastOperation();
     };
     _this.loadStationEta = function(stationId)
     {
-        _this.resetView();
+        _this.listPanel.clear();
         _this.loader.show();
         _this.dataSource.fetchLineETA(stationId);
         _this.listPanel.bindListClickAction(function () {});
