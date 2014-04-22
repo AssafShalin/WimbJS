@@ -56,7 +56,7 @@ function ListBox(id)
     };
     this.render = function() {
         $(this.id).html('');
-        for(i=0;i<this.rows.length;i++) {
+        for(var i=0;i<this.rows.length;i++) {
             var id = 'table-' + this.id.replace('#','') + '-row-' + i;
             var content = '<tr id="' + id + '"><td>' + this.rows[i].render() + '</td></tr>';
             $(this.id).append(content);
@@ -137,7 +137,7 @@ function SearchPanel()
     this.searchButton.onClick = function () {
         var searchQuery = _this.searchTextBox.getValue();
         _this.onSearchEvent(searchQuery);
-    }
+    };
     this.bindOnSearchEvent = function (event) {
       this.onSearchEvent = event;
     };
@@ -243,7 +243,7 @@ function WimbData()
     this.fetchFaveStations = function (force) {
         this.lastOperation = _this.fetchFaveStations;
         this.lastOperationArguments = [];
-        this.currentTitle = 'התחנות שלי'
+        this.currentTitle = 'התחנות שלי';
           if(this.fave.length == 0 || force) {
               this.get('ajax/stations.php',function (stations) {
                   _this.fave = stations;
@@ -266,11 +266,11 @@ function WimbData()
     };
     this.invokeLastOperation = function() {
         _this.lastOperation(_this.lastOperationArguments);
-    }
+    };
     this.resetLastOperation = function () {
         _this.lastOperation = 0;
         _this.lastOperationArguments = [];
-    }
+    };
 }
 
 function WimbUI()
@@ -291,7 +291,7 @@ function WimbUI()
     _this.dataSourceOperationFinish = function (data) {
         _this.listPanel.setTitle(_this.dataSource.getCurrentTitle());
         _this.listPanel.resetListSize();
-        for(i=0;i<data.length;i++) {
+        for(var i=0;i<data.length;i++) {
             _this.listPanel.listBox.add(ListBoxAdapterFactory.createAdapter(data[i]));
         }
         _this.listPanel.listBox.render();
@@ -338,7 +338,3 @@ function WimbUI()
     };
     _this.construct();
 }
-
-$(document).ready(function () {
-    var wimb = new WimbUI();
-});
