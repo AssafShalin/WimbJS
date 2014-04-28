@@ -242,7 +242,7 @@ function WimbData()
     this.onOperationFinish = function() {};
     this.fetchFaveStations = function (force) {
         this.lastOperation = _this.fetchFaveStations;
-        this.lastOperationArguments = [];
+        this.lastOperationArguments = false;
         this.currentTitle = 'התחנות שלי';
           if(this.fave.length == 0 || force) {
               this.get('ajax/stations.php',function (stations) {
@@ -289,6 +289,7 @@ function WimbUI()
 
     };
     _this.dataSourceOperationFinish = function (data) {
+        _this.resetView();
         _this.listPanel.setTitle(_this.dataSource.getCurrentTitle());
         _this.listPanel.resetListSize();
         for(var i=0;i<data.length;i++) {
@@ -309,9 +310,8 @@ function WimbUI()
         _this.searchPanel.hide();
     };
     _this.showSearch = function() {
-        _this.resetView();
         _this.dataSource.resetLastOperation();
-
+        _this.resetView();
         _this.searchPanel.show();
         _this.searchPanel.bindOnSearchEvent(function (searchQuery) { _this.loadStationEta(searchQuery);});
 
@@ -320,18 +320,16 @@ function WimbUI()
         _this.listPanel.bindListClickAction(function () {});
     };
     _this.showFave = function() {
-        _this.resetView();
         _this.loader.show();
         _this.dataSource.fetchFaveStations();
         _this.listPanel.bindListClickAction(function (row) { _this.loadStationEta(row.station.id)});
     };
     _this.refresh = function() {
-        _this.listPanel.clear();
+        _this.loader.show();
         _this.dataSource.invokeLastOperation();
     };
     _this.loadStationEta = function(stationId)
     {
-        _this.listPanel.clear();
         _this.loader.show();
         _this.dataSource.fetchLineETA(stationId);
         _this.listPanel.bindListClickAction(function () {});
