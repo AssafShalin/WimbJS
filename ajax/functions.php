@@ -134,7 +134,7 @@ class LinesETAQuery
 			$line->operator = (string)$lineData->MonitoredVehicleJourney->OperatorRef;
 			$line->destination = (string)$lineData->MonitoredVehicleJourney->DestinationRef;
 			$line->eta = (string)$lineData->MonitoredVehicleJourney->MonitoredCall->ExpectedArrivalTime;
-			$line->eta = ceil((strtotime($line->eta) - time()) / 60);
+			$line->eta = ceil((strtotime($line->eta) - time()) / 60) + 1;
 			$lines[] = $line;
 		}
 		$lines = $this->fetchDestinationName($lines);

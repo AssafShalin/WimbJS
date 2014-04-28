@@ -10,7 +10,7 @@ String.prototype.format = function() {
 };
 //id,operator,name,desc,eta
 var lineTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url(\'img/operators/{1}.png\');"></div><div class="station_name">{2}</div><div class="station_location">{3}</div>{4}</div>';
-var etaNowTemplate = '<div class="line_time">מגיע <span class="line_min">עכשיו</span></div>';
+var etaNowTemplate = '<div class="line_time">מגיע עכשיו</div>';
 var etaTimeTemplate = '<div class="line_time">מגיע בעוד <span class="line_min">{0}</span> דק\'</div>';
 
 //id,name,desc,id
