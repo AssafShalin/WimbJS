@@ -134,7 +134,7 @@ class LinesETAQuery
 			$line->operator = (string)$lineData->MonitoredVehicleJourney->OperatorRef;
 			$line->destination = (string)$lineData->MonitoredVehicleJourney->DestinationRef;
 			$line->eta = (string)$lineData->MonitoredVehicleJourney->MonitoredCall->ExpectedArrivalTime;
-			$line->eta = ceil((strtotime($line->eta) - time()) / 60) + 1;
+			$line->eta = ceil((strtotime($line->eta) + 1 - time()) / 60);
 			$lines[] = $line;
 		}
 		$lines = $this->fetchDestinationName($lines);
@@ -159,6 +159,7 @@ class LinesETAQuery
 		foreach($lines as $key => $line)
 		{
 			$lines[$key]->destinationName = $destinationName[$line->destination];
+			if($lines[$key]->destinationName == null) $lines[$key]->destinationName = "";
 		}
 		return $lines;
 	}
