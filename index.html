@@ -13,20 +13,29 @@
 		<link rel="icon" type="image/png" href="img/icon.png">
 		<link rel="stylesheet" type="text/css" href="style/wimb.css">
 		<script src="js/jquery.js"></script>
+		<script src="js/jquery-ui.js"></script>
 		<script src="js/wimb.js"></script>
 
         <script> $(document).ready(function () { new WimbUI();}); </script>
 	</head>
-	<body>
+	<body ontouchstart="">
 		<div class="header">
 			<div class="logo"></div>
 			<div class="header_button_container">
 				<div class="header_button header_search" id="toolbar-search"></div>
 				<div class="header_button header_fave" id="toolbar-fave"></div>
 				<div class="header_button header_refresh" id="toolbar-refresh"></div>
+				<div class="header_button header_settings" id="toolbar-settings"></div>
 			</div>
 		</div>
 		<div class="container">
+			<div id="search-menu">
+				<div id="search-menu-arrow"></div>
+				<div id="search-menu-buttons">
+					<div id="search-menu-button-bus" class="search-menu-button">חפש לפי מספר אוטובוס</div>
+					<div id="search-menu-button-line" class="search-menu-button">חפש לפי מספר תחנה</div>
+				</div>
+			</div>
 			<div id="search-panel" style="display: none;">
 				<input id="search-text" type="text" pattern="[0-9]*" placeholder="הכנס מספר קו" maxlength="5"/>
 				<div id="search-button" class="button">חפש</div>

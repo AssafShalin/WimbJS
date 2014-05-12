@@ -84,6 +84,9 @@ input {
 	float: 	left;
 	cursor: pointer;
 }
+.header_settings{
+	background: url('../img/header_settings.png');
+}
 .header_search{
 	background: url('../img/header_search.png');
 }
@@ -250,4 +253,77 @@ tr:active td:active {
 .scrollable {
     -webkit-overflow-scrolling: touch;
     overflow-y:auto;
+}
+#search-menu {
+	position: fixed;
+	z-index: 99;
+	margin-top: 15px;
+	width: 177px;
+	height: 74px;
+	right: 90px;
+	border-color: #FFFFFF;
+	border-style: solid;
+	border-width: 2px;
+	background-color: #1f1e1e;
+	border-radius: 4px;
+	text-align: right;
+	color: #FFFFFF;
+	text-overflow: ellipsis;
+  	white-space: nowrap;
+  	opacity: 0;
+	
+}
+#search-menu-arrow {
+	
+	margin-top: -18px;
+	margin-left: 143px;
+	background-image: url('../img/search_arrow.png');
+	width: 41px;
+	height: 19px;
+	
+
+}
+#search-menu-buttons {
+	margin-top: 3px;
+	margin-right: 10px;
+	margin-left: 10px;
+	padding-right: 6px;
+}
+.search-menu-button {
+
+	padding-top:3px;
+	padding-bottom: 3px;
+}
+.search-menu-button:active {
+	background: linear-gradient(#fedc6f, #ffb70a);
+	background-image: -webkit-linear-gradient(top, #fedc6f, #ffb70a);
+	border-color: #FFFFFF;
+	border-radius: 5px;
+}
+.pop-in {
+    -webkit-animation:pop-in 0.3s;
+    animation:pop-in 0.3s;
+}
+.pop-out {
+	-webkit-animation:pop-out 0.3s;
+    animation:pop-out 0.3s;
+}
+
+
+@keyframes pop-in {
+    0% { opacity: 0;transform: scale(0);transform: scale(0); }
+    100% { opacity: 1;transform: scale(1);transform: scale(1); }
+}
+@-webkit-keyframes pop-in {
+    0% { opacity: 0;-moz-transform: scale(0);-webkit-transform: scale(0); }    
+    100% { opacity: 1;-moz-transform: scale(1);-webkit-transform: scale(1); }
+}
+@keyframes pop-out {
+    0% { opacity: 1;transform: scale(1);transform: scale(1); }
+    100% { opacity: 0;transform: scale(0);transform: scale(0); }
+}
+@-webkit-keyframes pop-out {
+    
+    0% { opacity: 1;-moz-transform: scale(1);-webkit-transform: scale(1); }
+    100% { opacity: 0;-moz-transform: scale(0);-webkit-transform: scale(0); }    
 }

@@ -8,6 +8,20 @@ String.prototype.format = function() {
     }
     return s;
 };
+$.fn.togglePopMenu = function () {
+    if(this.css('opacity') == 0)
+    {
+        this.removeClass('pop-out');
+        this.addClass('pop-in');
+        this.css('opacity', 1);
+    }
+    else {
+        this.removeClass('pop-in');
+        this.addClass('pop-out');
+        this.css('opacity',0);
+
+    }
+};
 //id,operator,name,desc,eta
 var lineTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url(\'img/operators/{1}.png\');"></div><div class="station_name">{2}</div><div class="station_location">{3}</div>{4}</div>';
 var etaNowTemplate = '<div class="line_time">מגיע עכשיו</div>';
@@ -299,7 +313,7 @@ function WimbUI()
         _this.loader.hide();
     };
     _this.bindToolbarButtons = function () {
-        _this.toolbarPanel.searchButton.onClick = _this.showSearch;
+        _this.toolbarPanel.searchButton.onClick = function () { $('#search-menu').togglePopMenu(); };
         _this.toolbarPanel.faveButton.onClick = _this.showFave;
         _this.toolbarPanel.refreshButton.onClick = _this.refresh;
     };
