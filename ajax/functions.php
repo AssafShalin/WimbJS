@@ -1,4 +1,5 @@
 <?php
+define('MOCK', true);
 date_default_timezone_set('Asia/Jerusalem');
 class Line
 {
@@ -195,7 +196,7 @@ function getMockStationsData($stations)
 	{
 		$station = new Station();
 		$station->id = $stationId;
-    	$station->name = 'תחנה מדומה' . $key;
+    	$station->name = 'תחנה מדומה ' . $key;
     	$station->alias = '';
     	$station->description = 'כתובת מדומה';
 		$stationArray[] = $station;

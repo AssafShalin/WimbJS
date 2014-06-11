@@ -2,8 +2,14 @@
 include 'functions.php';
 $stations = json_decode(file_get_contents('stations.json'));
 
-//$stations = getMockStationsData($stations);
+if(MOCK)
+{
+	$stations = getMockStationsData($stations);
+}
+else
+{
+	$stationsQuery = new StationsQuery($stations);
+	$stations = $stationsQuery->fetchStationsData();	
+}
 
-$stationsQuery = new StationsQuery($stations);
-$stations = $stationsQuery->fetchStationsData();
 echo json_encode($stations);

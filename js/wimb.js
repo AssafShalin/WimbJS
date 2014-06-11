@@ -8,20 +8,6 @@ String.prototype.format = function() {
     }
     return s;
 };
-$.fn.togglePopMenu = function () {
-    if(this.css('opacity') == 0)
-    {
-        this.removeClass('pop-out');
-        this.addClass('pop-in');
-        this.css('opacity', 1);
-    }
-    else {
-        this.removeClass('pop-in');
-        this.addClass('pop-out');
-        this.css('opacity',0);
-
-    }
-};
 //id,operator,name,desc,eta
 var lineTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url(\'img/operators/{1}.png\');"></div><div class="station_name">{2}</div><div class="station_location">{3}</div>{4}</div>';
 var etaNowTemplate = '<div class="line_time">מגיע עכשיו</div>';
@@ -109,6 +95,7 @@ function TextBox(id)
     this.getValue = function()      {   return $(this.id).val();    };
     this.setValue = function(value) {   $(this.id).val(value);      };
     this.clear    = function()      {   $(this.id).val('');         };
+    this.setPlaceholder = function(value) { $(this.id).attr('placeholder',value); console.log('placeholder is now set to ' + value)};
 
 }
 function Button(id, onClick)
@@ -148,6 +135,7 @@ function SearchPanel()
     this.show = function  ()    { $(this.id).show(); };
     this.hide = function  ()    { $(this.id).hide(); };
     this.clear = function ()    { this.searchTextBox.clear(); };
+    this.setPlaceholder = function (value) { this.searchTextBox.setPlaceholder(value); };
     this.searchButton.onClick = function () {
         var searchQuery = _this.searchTextBox.getValue();
         _this.onSearchEvent(searchQuery);
@@ -155,6 +143,46 @@ function SearchPanel()
     this.bindOnSearchEvent = function (event) {
       this.onSearchEvent = event;
     };
+}
+function SearchMenu()
+{
+    var _this = this;
+    this.id = '#search-menu';
+    this.isVisible = false;
+    this.searchByStationId = new Button('#search-menu-button-line');
+    this.searchByLineNumber = new Button('#search-menu-button-bus');
+    this.searchNearby = new Button('#search-menu-button-nearby');
+    this.showSearchDelegate = function () {};
+
+    this._construct = function () {
+        _this.searchByStationId.onClick = function () { _this.showSearchDelegate('STATION_ID');};
+        _this.searchByLineNumber.onClick = function () { _this.showSearchDelegate('LINE_NUM');};
+        _this.searchNearby.onClick = function () { _this.showSearchDelegate('NEAR_BY');};
+        
+    };
+    this.toggle = function () {
+        if(_this.isVisible)
+            _this.hide();
+        else
+            _this.show();
+    };
+    this.show = function () {
+        _this.isVisible = true;
+        $(_this.id).show();
+        $(_this.id).removeClass('pop-out');
+        $(_this.id).addClass('pop-in');
+
+    };
+    this.hide = function () {
+        _this.isVisible = false;
+        $(_this.id).removeClass('pop-in');
+        $(_this.id).addClass('pop-out');
+        $(_this.id).one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', _this.onAnimationFinished);
+    };
+    this.onAnimationFinished = function () {
+        $(_this).hide();
+    };
+    this._construct();
 }
 function ListPanel()
 {
@@ -242,6 +270,9 @@ function WimbData()
     this.lastOperation = 0;
     this.lastOperationArguments = [];
     this.currentTitle = '';
+    this.currentLat = 0;
+    this.currentLng = 0;
+    this.isLocationUpdated = false;
     this.get = function(url, callback) {
         console.log('requesting data from ' + url);
         var getObj = $.get(url, function (data){
@@ -279,11 +310,68 @@ function WimbData()
         });
     };
     this.invokeLastOperation = function() {
-        _this.lastOperation(_this.lastOperationArguments);
+        if(_this.lastOperation)
+            _this.lastOperation(_this.lastOperationArguments);
     };
+    this.isLastOperationAvalible = function () {
+        if(_this.lastOperation) return true;
+        return false;
+    }
     this.resetLastOperation = function () {
         _this.lastOperation = 0;
         _this.lastOperationArguments = [];
+    };
+
+    this.fetchNearbyStations = function () {
+        _this.getLocation(function () {
+            if(_this.isLocationUpdated)
+            {
+                console.log(_this.currentLat + " " + _this.currentLng);
+                _this.get('ajax/nearby.php?lat=' + _this.currentLat + "&lng=" + _this.currentLng, function (data) {
+                    _this.currentTitle = 'תחנות קרובות';
+                    _this.onOperationFinish(data)
+                });
+            }
+            else
+            {
+                _this.onOperationFinish([]); //error; return empty set
+            }
+        });
+    };
+    this.getLocation = function (locationFetchedCallback) {
+        if(navigator.geolocation)
+        {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                _this.currentLat = position.coords.latitude;
+                _this.currentLng = position.coords.longitude;
+                _this.isLocationUpdated = true;
+                locationFetchedCallback();
+            }, function (error) {
+                alert('שירותי מיקום לא זמינים');
+                _this.isLocationUpdated = false;
+                switch(error.code)
+                {
+                    case error.PERMISSION_DENIED:
+                        console.log('PERMISSION DENIED')
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        console.log('Location service has returned unkown error')
+                        break;
+                    case error.TIMEOUT:
+                        console.log('Location service is timed out');
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        console.log('Location service could not retrive current position');
+                        break;
+                }
+            });
+        }
+        else
+        {
+            alert('שירותי מיקום לא זמינים');
+            _this.isLocationUpdated = false;
+            locationFetchedCallback();
+        }
     };
 }
 
@@ -292,15 +380,16 @@ function WimbUI()
     var _this = this; //keep reference of this in delegate actions
     _this.dataSource = new WimbData();
     _this.toolbarPanel = new ToolbarPanel();
+    _this.searchMenu = new SearchMenu();
     _this.searchPanel = new SearchPanel();
     _this.listPanel = new ListPanel();
     _this.loader = new LoaderPanel();
+
 
     _this.construct = function() {
         _this.bindToolbarButtons();
         _this.dataSource.onOperationFinish = _this.dataSourceOperationFinish;
         _this.showFave();
-
     };
     _this.dataSourceOperationFinish = function (data) {
         _this.resetView();
@@ -313,25 +402,46 @@ function WimbUI()
         _this.loader.hide();
     };
     _this.bindToolbarButtons = function () {
-        _this.toolbarPanel.searchButton.onClick = function () { $('#search-menu').togglePopMenu(); };
-        _this.toolbarPanel.faveButton.onClick = _this.showFave;
+        _this.searchMenu.showSearchDelegate = _this.showSearch;
+        _this.toolbarPanel.searchButton.onClick = _this.searchMenu.toggle;
+        _this.toolbarPanel.faveButton.onClick = _this.showFave; 
         _this.toolbarPanel.refreshButton.onClick = _this.refresh;
     };
     _this.resetView = function () {
         _this.loader.hide();
         _this.searchPanel.clear();
         _this.listPanel.clear();
+        _this.searchMenu.hide();
         _this.searchPanel.hide();
     };
-    _this.showSearch = function() {
+    _this.showSearch = function(type) {
         _this.dataSource.resetLastOperation();
         _this.resetView();
-        _this.searchPanel.show();
-        _this.searchPanel.bindOnSearchEvent(function (searchQuery) { _this.loadStationEta(searchQuery);});
+        
+        if(type==='STATION_ID')
+        {
+            _this.listPanel.setTitle('חיפוש');
+            _this.searchPanel.show();
+            _this.searchPanel.bindOnSearchEvent(function (searchQuery) { _this.loadStationEta(searchQuery);});
+            _this.searchPanel.setPlaceholder('חפש מספר תחנה');
+            _this.listPanel.bindListClickAction(function () {});
+        }
+        else if(type==='LINE_NUM')
+        {
+            _this.listPanel.setTitle('חיפוש');
+            _this.searchPanel.show();
+            _this.searchPanel.setPlaceholder('חפש מספר אוטובוס');   
+            _this.listPanel.bindListClickAction(function () {});
+        }
+        else if(type==='NEAR_BY')
+        {
 
-        _this.listPanel.setTitle('חיפוש');
+            _this.listPanel.setTitle('תחנות קרובות');
+            _this.dataSource.fetchNearbyStations();
+        }
+        
         _this.listPanel.resetListSize();
-        _this.listPanel.bindListClickAction(function () {});
+        
     };
     _this.showFave = function() {
         _this.loader.show();
@@ -339,11 +449,13 @@ function WimbUI()
         _this.listPanel.bindListClickAction(function (row) { _this.loadStationEta(row.station.id)});
     };
     _this.refresh = function() {
-        _this.loader.show();
-        _this.dataSource.invokeLastOperation();
+        if(_this.dataSource.isLastOperationAvalible())
+        {
+            _this.loader.show();
+            _this.dataSource.invokeLastOperation();
+        }
     };
-    _this.loadStationEta = function(stationId)
-    {
+    _this.loadStationEta = function(stationId) {
         _this.loader.show();
         _this.dataSource.fetchLineETA(stationId);
         _this.listPanel.bindListClickAction(function () {});
