@@ -16,6 +16,8 @@ var etaTimeTemplate = '<div class="line_time">מגיע בעוד <span class="lin
 //id,name,desc,id
 var stationTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מספר תחנה {3}</div></div>';
 
+//id,name,desc,distance,id
+var nearbyTemplate = '<tr><td><div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מרחק: {3} קמ<br/>מספר תחנה {4}</div></div></td></tr>';
 //</editor-fold>
 
 //<editor-fold desc="Model-Objects">
@@ -36,6 +38,7 @@ function Station()
     this.name = '';
     this.alias = '';
     this.description = '';
+    this.distance = '';
 }
 //</editor-fold>
 
@@ -226,6 +229,22 @@ function StationListBoxRowAdapter(station)
 
     return self;
 }
+function NearbyListBoxRowAdapter(nearbyStation)
+{
+    this.station = nearbyStation;
+    var self = new ListBoxRow();
+    var _this = this;
+    self._this = this;
+    self.render = function () {
+        return nearbyTemplate.format( _this.station.id,
+                                _this.station.name,
+                                _this.station.description,
+                                _this.station.distance,
+                                _this.station.id);
+    };
+
+    return self;
+}
 function LineListBoxRowAdapter(line)
 {
     this.line = line;
@@ -256,6 +275,8 @@ var ListBoxAdapterFactory = {
         else if(type === 'Station') {
             return new StationListBoxRowAdapter(object);
         }
+        else if(type === 'Nearby')
+            return new NearbyListBoxRowAdapter(object);
         else {
             console.log("Could not create listbox adapter for this object type '{0}'\n".format(type));
         }
@@ -435,8 +456,8 @@ function WimbUI()
         }
         else if(type==='NEAR_BY')
         {
-
             _this.listPanel.setTitle('תחנות קרובות');
+            _this.loader.show();
             _this.dataSource.fetchNearbyStations();
         }
         

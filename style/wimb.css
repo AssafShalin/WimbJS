@@ -178,6 +178,9 @@ tr:active td:active {
 .station_number {
 	float: left;
 }
+.station_distance {
+	float: left;
+}
 .line_container .station_name {
 	padding-top: 5px;
 }

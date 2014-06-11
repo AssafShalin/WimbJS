@@ -18,7 +18,14 @@ class Station
     public $name;
     public $alias;
     public $description;
+
+    public function castToNearBy($distance)
+    {
+    	$this->distance = $distance;
+    	$this->__type__ = 'Nearby';
+    }
 }
+
 class HttpRequest
 {
 	private $curl;
