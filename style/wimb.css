@@ -107,13 +107,7 @@ input {
 	overflow-y: hidden;
 
 }
-.station_title {
-	margin-top: 10px;
-	margin-right: 15px;
-	direction: rtl;
-	font-size: 16px;
 
-}
 .stations_container
 {
 	position: absolute;
@@ -311,4 +305,29 @@ tr:active td:active {
 .pop-out {
 	transform: scale(0);
 	opacity: 0;
+}
+#station-fave {
+	background-size: 100%;
+	width: 30px;
+	height: 30px;
+	float: left;
+	margin-top: -6px;
+	display: none;
+}
+.station_title {
+	font-size: 16px;
+	float: right;
+	padding-bottom: 7px;
+}
+.faved_station {
+	background-image: url('../img/fav_mark.png');
+}
+.unfaved_station {
+	background-image: url('../img/fav.png');
+}
+.list-panel-header {
+	margin-top: 25px;
+	margin-right: auto;
+	margin-left: auto;
+	width: 90%;	
 }
