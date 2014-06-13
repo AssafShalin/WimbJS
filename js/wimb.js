@@ -17,7 +17,7 @@ var etaTimeTemplate = '<div class="line_time">מגיע בעוד <span class="lin
 var stationTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מספר תחנה {3}</div></div>';
 
 //id,name,desc,distance,id
-var nearbyTemplate = '<tr><td><div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מרחק: {3} קמ<br/>מספר תחנה {4}</div></div></td></tr>';
+var nearbyTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מרחק: {3} קמ<br/>מספר תחנה {4}</div></div>';
 //</editor-fold>
 
 //<editor-fold desc="Model-Objects">
@@ -269,17 +269,14 @@ function LineListBoxRowAdapter(line)
 var ListBoxAdapterFactory = {
     createAdapter: function (object) {
         var type = object.__type__;
-        if(type==='Line') {
-            return new LineListBoxRowAdapter(object);
+        var adapterName = type + 'ListBoxRowAdapter';
+        var adapter = eval(adapterName);
+        if(adapter == undefined)
+        {
+            console.log("Could not create ListBoxRowAdapter for __type__ " + type + ", please make sure that " + adapterName + " is a ListBoxAdapter");
+            return false;
         }
-        else if(type === 'Station') {
-            return new StationListBoxRowAdapter(object);
-        }
-        else if(type === 'Nearby')
-            return new NearbyListBoxRowAdapter(object);
-        else {
-            console.log("Could not create listbox adapter for this object type '{0}'\n".format(type));
-        }
+        return new adapter(object);
     }
 };
 //</editor-fold>
