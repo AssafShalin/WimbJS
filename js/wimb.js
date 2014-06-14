@@ -186,12 +186,30 @@ function SearchMenu()
 }
 function ListPanel()
 {
+    var _this  = this;
     this.listBox = new ListBox('#station-list');
     this.listTitle = new Label('#station-title');
+    
     this.faveButton = new Button('#station-fave');
+    this.faveButtonState = false;
+    
+    this.faveButtonAction = function () {};
+
     this.bindListClickAction = function(action) {
       this.listBox.onRowClick = action;
     };
+
+    this.bindFaveButtonClickAction = function(action) {
+        this.faveButtonAction = action;    
+    };
+
+    this.faveButton.onClick = function () {
+            _this.faveButtonState = !_this.faveButtonState;
+            _this.setFaveButtonState(_this.faveButtonState);
+            if(_this.faveButtonAction)
+                _this.faveButtonAction(_this.faveButtonState);
+    }
+
     this.clear = function () {
         this.listBox.clear();
         this.listTitle.clear();
@@ -210,6 +228,7 @@ function ListPanel()
         this.faveButton.hide();
     };
     this.setFaveButtonState = function(state) {
+        this.faveButtonState = state;
         if(state)
         {
             $(this.faveButton.id).removeClass('unfaved_station');
@@ -380,6 +399,7 @@ function WimbData()
     };
 
     this.fetchNearbyStations = function () {
+        _this.currentTitle = 'תחנות קרובות';
         _this.getLocation(function () {
             if(_this.isLocationUpdated)
             {
@@ -397,8 +417,10 @@ function WimbData()
     };
 
     this.isStationFaved = function(stationId) {
-        return true;
-    
+        for (var i = 0; i < _this.fave.length; i++) {
+            if(_this.fave[i].id == stationId) return true;
+        }
+        return false;
     };
 
     this.getLocation = function (locationFetchedCallback) {
@@ -412,21 +434,8 @@ function WimbData()
             }, function (error) {
                 alert('שירותי מיקום לא זמינים');
                 _this.isLocationUpdated = false;
-                switch(error.code)
-                {
-                    case error.PERMISSION_DENIED:
-                        console.log('PERMISSION DENIED')
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        console.log('Location service has returned unkown error')
-                        break;
-                    case error.TIMEOUT:
-                        console.log('Location service is timed out');
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        console.log('Location service could not retrive current position');
-                        break;
-                }
+                console.log("Location service failed with error " + error.code);
+                locationFetchedCallback();
             });
         }
         else
