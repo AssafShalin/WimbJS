@@ -8,16 +8,9 @@ String.prototype.format = function() {
     }
     return s;
 };
-//id,operator,name,desc,eta
-var lineTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url(\'img/operators/{1}.png\');"></div><div class="station_name">{2}</div><div class="station_location">{3}</div>{4}</div>';
-var etaNowTemplate = '<div class="line_time">מגיע עכשיו</div>';
-var etaTimeTemplate = '<div class="line_time">מגיע בעוד <span class="line_min">{0}</span> דק\'</div>';
 
-//id,name,desc,id
-var stationTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מספר תחנה {3}</div></div>';
 
-//id,name,desc,distance,id
-var nearbyTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מרחק: {3} קמ<br/>מספר תחנה {4}</div></div>';
+
 //</editor-fold>
 
 //<editor-fold desc="Model-Objects">
@@ -105,6 +98,10 @@ function Button(id, onClick)
 {
     var _this = this;
     this.id = id;
+
+    this.show = function () { $(this.id).show();};
+    this.hide = function () { $(this.id).hide();};
+
     this.onClick = onClick || function(button) {};
     //bind on click
     $(id).click(function() { _this.onClick(_this);});
@@ -191,12 +188,14 @@ function ListPanel()
 {
     this.listBox = new ListBox('#station-list');
     this.listTitle = new Label('#station-title');
+    this.faveButton = new Button('#station-fave');
     this.bindListClickAction = function(action) {
       this.listBox.onRowClick = action;
     };
     this.clear = function () {
         this.listBox.clear();
         this.listTitle.clear();
+
     };
     this.setTitle = function (title) {
         this.listTitle.setValue(title);
@@ -204,6 +203,25 @@ function ListPanel()
     this.resetListSize = function () {
         $('.stations_container').offset({top: this.listTitle.offsetTop()});
     };
+    this.showFaveButton = function() {
+        this.faveButton.show();
+    };
+    this.hideFaveButton = function() {
+        this.faveButton.hide();
+    };
+    this.setFaveButtonState = function(state) {
+        if(state)
+        {
+            $(this.faveButton.id).removeClass('unfaved_station');
+            $(this.faveButton.id).addClass('faved_station');
+        }
+        else
+        {
+            $(this.faveButton.id).removeClass('faved_station');
+            $(this.faveButton.id).addClass('unfaved_station');
+        }
+    };
+
 }
 function LoaderPanel()
 {
@@ -216,12 +234,16 @@ function LoaderPanel()
 //<editor-fold desc="UI-Adapters">
 function StationListBoxRowAdapter(station)
 {
+
+    //id,name,desc,id
+    this.stationTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מספר תחנה {3}</div></div>';
     this.station = station;
     var self = new ListBoxRow();
     var _this = this;
     self._this = this;
+
     self.render = function () {
-        return stationTemplate.format( _this.station.id,
+        return _this.stationTemplate.format( _this.station.id,
                                 _this.station.name,
                                 _this.station.description,
                                 _this.station.id);
@@ -231,12 +253,15 @@ function StationListBoxRowAdapter(station)
 }
 function NearbyListBoxRowAdapter(nearbyStation)
 {
+    //id,name,desc,distance,id
+    this.nearbyTemplate = '<div class="station_container" id="{0}"><div class="station_name">{1}</div><div class="station_location">{2}</div><div class="station_number">מרחק: {3} קמ<br/>מספר תחנה {4}</div></div>';
     this.station = nearbyStation;
     var self = new ListBoxRow();
     var _this = this;
     self._this = this;
+
     self.render = function () {
-        return nearbyTemplate.format( _this.station.id,
+        return _this.nearbyTemplate.format( _this.station.id,
                                 _this.station.name,
                                 _this.station.description,
                                 _this.station.distance,
@@ -247,17 +272,23 @@ function NearbyListBoxRowAdapter(nearbyStation)
 }
 function LineListBoxRowAdapter(line)
 {
+    //id,operator,name,desc,eta
+    this.lineTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url(\'img/operators/{1}.png\');"></div><div class="station_name">{2}</div><div class="station_location">{3}</div>{4}</div>';
+    this.etaNowTemplate = '<div class="line_time">מגיע עכשיו</div>';
+    this.etaTimeTemplate = '<div class="line_time">מגיע בעוד <span class="line_min">{0}</span> דק\'</div>';
+
     this.line = line;
     var self = new ListBoxRow();
     var _this = this;
     self._this = this;
+
     self.render = function () {
         var etaTemplate;
         if(line.eta > 1)
-            etaTemplate = etaTimeTemplate.format(_this.line.eta);
+            etaTemplate = _this.etaTimeTemplate.format(_this.line.eta);
         else
-            etaTemplate = etaNowTemplate;
-        return lineTemplate.format(_this.line.id,
+            etaTemplate = _this.etaNowTemplate;
+        return _this.lineTemplate.format(_this.line.id,
                             _this.line.operator,
                             _this.line.number,
                             _this.line.destinationName,
@@ -291,6 +322,7 @@ function WimbData()
     this.currentLat = 0;
     this.currentLng = 0;
     this.isLocationUpdated = false;
+
     this.get = function(url, callback) {
         console.log('requesting data from ' + url);
         var getObj = $.get(url, function (data){
@@ -301,8 +333,11 @@ function WimbData()
            alert('Could not connect to server, please try again later.');
         });
     };
+    
     this.getCurrentTitle = function() {return this.currentTitle;};
+    
     this.onOperationFinish = function() {};
+    
     this.fetchFaveStations = function (force) {
         this.lastOperation = _this.fetchFaveStations;
         this.lastOperationArguments = false;
@@ -318,6 +353,7 @@ function WimbData()
               this.onOperationFinish(this.fave);
           }
     };
+
     this.fetchLineETA = function(stationId) {
         this.lastOperation = _this.fetchLineETA;
         this.lastOperationArguments = stationId;
@@ -327,14 +363,17 @@ function WimbData()
            _this.onOperationFinish(data.eta);
         });
     };
+
     this.invokeLastOperation = function() {
         if(_this.lastOperation)
             _this.lastOperation(_this.lastOperationArguments);
     };
+
     this.isLastOperationAvalible = function () {
         if(_this.lastOperation) return true;
         return false;
-    }
+    };
+
     this.resetLastOperation = function () {
         _this.lastOperation = 0;
         _this.lastOperationArguments = [];
@@ -356,6 +395,12 @@ function WimbData()
             }
         });
     };
+
+    this.isStationFaved = function(stationId) {
+        return true;
+    
+    };
+
     this.getLocation = function (locationFetchedCallback) {
         if(navigator.geolocation)
         {
@@ -393,6 +438,7 @@ function WimbData()
     };
 }
 
+
 function WimbUI()
 {
     var _this = this; //keep reference of this in delegate actions
@@ -409,8 +455,9 @@ function WimbUI()
         _this.dataSource.onOperationFinish = _this.dataSourceOperationFinish;
         _this.showFave();
     };
+
     _this.dataSourceOperationFinish = function (data) {
-        _this.resetView();
+        _this.listPanel.clear();
         _this.listPanel.setTitle(_this.dataSource.getCurrentTitle());
         _this.listPanel.resetListSize();
         for(var i=0;i<data.length;i++) {
@@ -419,19 +466,23 @@ function WimbUI()
         _this.listPanel.listBox.render();
         _this.loader.hide();
     };
+
     _this.bindToolbarButtons = function () {
         _this.searchMenu.showSearchDelegate = _this.showSearch;
         _this.toolbarPanel.searchButton.onClick = _this.searchMenu.toggle;
         _this.toolbarPanel.faveButton.onClick = _this.showFave; 
         _this.toolbarPanel.refreshButton.onClick = _this.refresh;
     };
+
     _this.resetView = function () {
         _this.loader.hide();
         _this.searchPanel.clear();
         _this.listPanel.clear();
+        _this.listPanel.hideFaveButton();
         _this.searchMenu.hide();
         _this.searchPanel.hide();
     };
+
     _this.showSearch = function(type) {
         _this.dataSource.resetLastOperation();
         _this.resetView();
@@ -461,11 +512,14 @@ function WimbUI()
         _this.listPanel.resetListSize();
         
     };
+
     _this.showFave = function() {
+        _this.resetView();
         _this.loader.show();
         _this.dataSource.fetchFaveStations();
         _this.listPanel.bindListClickAction(function (row) { _this.loadStationEta(row.station.id)});
     };
+
     _this.refresh = function() {
         if(_this.dataSource.isLastOperationAvalible())
         {
@@ -473,10 +527,15 @@ function WimbUI()
             _this.dataSource.invokeLastOperation();
         }
     };
+
     _this.loadStationEta = function(stationId) {
+        var isStationFaved = _this.dataSource.isStationFaved(stationId);
         _this.loader.show();
         _this.dataSource.fetchLineETA(stationId);
+        _this.listPanel.showFaveButton();
+        _this.listPanel.setFaveButtonState(isStationFaved);
         _this.listPanel.bindListClickAction(function () {});
     };
+
     _this.construct();
 }

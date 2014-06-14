@@ -313,6 +313,7 @@ tr:active td:active {
 	float: left;
 	margin-top: -6px;
 	display: none;
+	cursor: pointer;
 }
 .station_title {
 	font-size: 16px;
