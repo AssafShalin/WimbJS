@@ -270,6 +270,8 @@ tr:active td:active {
 	text-overflow: ellipsis;
   	white-space: nowrap;
   	transition: transform 0.1s linear, opacity 0.1s linear;
+  	-webkit-transition: -webkit-transform 0.1s linear, opacity 0.1s linear;
+
 }
 #search-menu-arrow {
 	
@@ -300,10 +302,12 @@ tr:active td:active {
 }
 .pop-in {
 	transform: scale(1);
+	-webkit-transform: scale(1);
 	opacity: 1;
 }
 .pop-out {
 	transform: scale(0);
+	-webkit-transform: scale(0);
 	opacity: 0;
 }
 #station-fave {

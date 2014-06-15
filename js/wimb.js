@@ -8,9 +8,6 @@ String.prototype.format = function() {
     }
     return s;
 };
-
-
-
 //</editor-fold>
 
 //<editor-fold desc="Model-Objects">
@@ -251,6 +248,19 @@ function LoaderPanel()
 //</editor-fold>
 
 //<editor-fold desc="UI-Adapters">
+var ListBoxAdapterFactory = {
+    createAdapter: function (object) {
+        var type = object.__type__;
+        var adapterName = type + 'ListBoxRowAdapter';
+        var adapter = eval(adapterName);
+        if(adapter == undefined)
+        {
+            console.log("Could not create ListBoxRowAdapter for __type__ " + type + ", please make sure that " + adapterName + " is a ListBoxAdapter");
+            return false;
+        }
+        return new adapter(object);
+    }
+};
 function StationListBoxRowAdapter(station)
 {
 
@@ -316,19 +326,6 @@ function LineListBoxRowAdapter(line)
 
     return self;
 }
-var ListBoxAdapterFactory = {
-    createAdapter: function (object) {
-        var type = object.__type__;
-        var adapterName = type + 'ListBoxRowAdapter';
-        var adapter = eval(adapterName);
-        if(adapter == undefined)
-        {
-            console.log("Could not create ListBoxRowAdapter for __type__ " + type + ", please make sure that " + adapterName + " is a ListBoxAdapter");
-            return false;
-        }
-        return new adapter(object);
-    }
-};
 //</editor-fold>
 
 function WimbData()
