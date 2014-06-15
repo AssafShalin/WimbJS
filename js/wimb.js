@@ -260,10 +260,16 @@ function ModalView() {
 
     this.show = function () {
         this.isVisible = true;
-        $(this.id).show();
+        $(this.id).addClass('modal-view-unvisable');
         
-        $(this.id).addClass('modal-view-visable');
-        $(this.id).removeClass('modal-view-unvisable');
+        $(this.id).bind('show', function() {
+            alert('c');
+            //$(this.id).removeClass('modal-view-unvisable');
+            //$(this.id).addClass('modal-view-visable');
+        });
+        $(this.id).show();    
+            
+        
     };
 
     this.hide = function () {
