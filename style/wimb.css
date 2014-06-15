@@ -336,3 +336,19 @@ tr:active td:active {
 	margin-left: auto;
 	width: 90%;	
 }
+.modal-view {
+	opacity: .9;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	
+	background-color: #000000;
+	transition: top 0.5s;
+  	-webkit-transition: top 0.5s;
+}
+.modal-view-visable {
+	top: 59px;
+}
+.modal-view-unvisable {
+	top: 100%;
+}

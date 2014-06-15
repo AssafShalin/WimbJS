@@ -101,7 +101,13 @@ function Button(id, onClick)
 
     this.onClick = onClick || function(button) {};
     //bind on click
-    $(id).click(function() { _this.onClick(_this);});
+    $(id).click(function() {
+     if(_this.onClick)
+        _this.onClick(_this);
+     else
+        console.log('Button ' + this.id + ' onClick event is not binded');
+
+    });
 }
 
 function Label(id)
@@ -121,6 +127,7 @@ function ToolbarPanel()
     this.searchButton = new Button('#toolbar-search');
     this.faveButton = new Button('#toolbar-fave');
     this.refreshButton = new Button('#toolbar-refresh');
+    this.settingsButton = new Button('#toolbar-settings');
 }
 function SearchPanel()
 {
@@ -244,6 +251,38 @@ function LoaderPanel()
     this.id = '#loader';
     this.show = function  ()    { $(this.id).show(); };
     this.hide = function  ()    { $(this.id).hide(); };
+}
+function ModalView() {
+    
+    this.id = '#modal-view';
+    this.isVisible = false;
+    var _this = this;
+
+    this.show = function () {
+        this.isVisible = true;
+        $(this.id).show();
+        
+        $(this.id).addClass('modal-view-visable');
+        $(this.id).removeClass('modal-view-unvisable');
+    };
+
+    this.hide = function () {
+        this.isVisible = false;
+        $(this.id).removeClass('modal-view-visable');
+        $(this.id).addClass('modal-view-unvisable');
+        $(this.id).one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', _this.onAnimationFinished);
+    };
+
+    this.toggle = function() {
+        if(this.isVisible) this.hide();
+        else this.show();
+    };
+
+    this.onAnimationFinished = function () {
+        $(_this.id).hide();
+    };
+
+
 }
 //</editor-fold>
 
@@ -454,7 +493,7 @@ function WimbUI()
     _this.searchPanel = new SearchPanel();
     _this.listPanel = new ListPanel();
     _this.loader = new LoaderPanel();
-
+    _this.modalView = new ModalView();
 
     _this.construct = function() {
         _this.bindToolbarButtons();
@@ -478,6 +517,12 @@ function WimbUI()
         _this.toolbarPanel.searchButton.onClick = _this.searchMenu.toggle;
         _this.toolbarPanel.faveButton.onClick = _this.showFave; 
         _this.toolbarPanel.refreshButton.onClick = _this.refresh;
+        _this.toolbarPanel.settingsButton.onClick = _this.showSettings;
+    };
+
+    _this.showSettings = function () {
+        _this.modalView.toggle();
+
     };
 
     _this.resetView = function () {
