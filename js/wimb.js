@@ -398,31 +398,71 @@ function WimbData()
     this.getCurrentTitle = function() {return this.currentTitle;};
     
     this.onOperationFinish = function() {};
-    
     this.fetchFaveStations = function (force) {
         this.lastOperation = _this.fetchFaveStations;
         this.lastOperationArguments = false;
         this.currentTitle = 'התחנות שלי';
-          if(this.fave.length == 0 || force) {
+        this.currentStation = false;
+        var faves = localStorage.getItem("fave");
+        this.fave = JSON.parse(faves);
+
+        if(this.fave == null || force) {
               this.get('ajax/stations.php',function (stations) {
                   _this.fave = stations;
+                  _this.saveFaveList();
                   _this.onOperationFinish(_this.fave);
               });
-          }
-          else {
+        }
+        else {
               console.log('stations are loaded to memory');
               this.onOperationFinish(this.fave);
-          }
+        }
     };
 
     this.fetchLineETA = function(stationId) {
         this.lastOperation = _this.fetchLineETA;
         this.lastOperationArguments = stationId;
         this.get('ajax/lines.php?stationId=' + stationId, function (data) {
-
            _this.currentTitle = data.station.name;
            _this.onOperationFinish(data.eta);
         });
+    };
+
+    this.fetchStation = function (stationId, callback) {
+        for(var i=0;i<_this.fave.length;i++)
+        {
+            if(_this.fave[i].id == stationId)
+            {
+                console.log('fetched station info from fave');
+                callback(_this.fave[i]);
+                return;
+            }
+        }
+        console.log('could not find station info in fave, looking up online');
+        this.get('ajax/station.php?stationId=' + stationId, function (data) { callback(data); });
+    };
+
+
+    this.saveFaveList = function () {
+        localStorage.setItem("fave", JSON.stringify(this.fave)); 
+    };
+
+    this.faveStation = function (stationId) {
+        this.fetchStation(stationId, function (station) {
+            _this.fave.push(station);
+            _this.saveFaveList();
+        });
+    };
+
+    this.unfaveStation = function (stationId) {
+        for(var i=0;i<this.fave.length;i++)
+        {
+            if(this.fave[i].id == stationId)
+            {
+                this.fave.splice(i, 1);
+            }
+        }
+        _this.saveFaveList();
     };
 
     this.invokeLastOperation = function() {
@@ -591,7 +631,18 @@ function WimbUI()
         _this.dataSource.fetchLineETA(stationId);
         _this.listPanel.showFaveButton();
         _this.listPanel.setFaveButtonState(isStationFaved);
+        _this.listPanel.bindFaveButtonClickAction(function (state) {
+            if(state)
+            {
+                _this.dataSource.faveStation(stationId);
+            }
+            else
+            {
+                _this.dataSource.unfaveStation(stationId);
+            }
+        });
         _this.listPanel.bindListClickAction(function () {});
+
     };
 
     _this.construct();
