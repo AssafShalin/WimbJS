@@ -255,28 +255,24 @@ function LoaderPanel()
 function ModalView() {
     
     this.id = '#modal-view';
+    
     this.isVisible = false;
+    this.isFullscreen = false;
+
     var _this = this;
 
     this.show = function () {
         this.isVisible = true;
-        //$(this.id).addClass('modal-view-unvisable');
-        $(this.id).removeClass('modal-view-unvisable');
-        $(this.id).addClass('modal-view-visable');
-        //$(this.id).bind('show', function() {
-          //  alert('c');
-            //
-            //
-        //});
-            
-        
+        $(this.id).show();
+        if(this.isFullscreen)
+            $(this.id).animate({top: '0px'});
+        else
+            $(this.id).animate({top: '59px'});
     };
 
     this.hide = function () {
         this.isVisible = false;
-        $(this.id).removeClass('modal-view-visable');
-        $(this.id).addClass('modal-view-unvisable');
-        //$(this.id).one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', _this.onAnimationFinished);
+        $(this.id).animate({top: '100%'} , function () {$(_this.id).hide();});
     };
 
     this.toggle = function() {
