@@ -280,6 +280,10 @@ function ModalView() {
         else this.show();
     };
 
+    this.setContent = function (content) {
+        $(this.id).html(content);
+    };
+
 
 
 }
@@ -538,6 +542,7 @@ function WimbUI()
         _this.bindToolbarButtons();
         _this.dataSource.onOperationFinish = _this.dataSourceOperationFinish;
         _this.showFave();
+        setTimeout(function () { if(_this.isHomeScreenCapableAndNotRunningFromHomeScreen()) _this.viewAddToHomeScreenInstructions();}, 700);
     };
 
     _this.dataSourceOperationFinish = function (data) {
@@ -638,5 +643,15 @@ function WimbUI()
 
     };
 
+    _this.isHomeScreenCapableAndNotRunningFromHomeScreen = function () {
+        if(("standalone" in window.navigator) && !window.navigator.standalone) return true;
+        return false;
+    };
+    
+    _this.viewAddToHomeScreenInstructions = function () {
+        _this.modalView.isFullscreen = true;
+        _this.modalView.setContent('<p align="center" style="color: #FFFFFF;" dir="rtl">כדי שהאפליקציה תוכל לשמור את התחנות שלך<br/>לחץ <img src="img/homescreen.png"/> ואז Add to Home Screen</p>');
+        _this.modalView.show();
+    };
     _this.construct();
 }
