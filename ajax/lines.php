@@ -7,6 +7,7 @@ if(MOCK)
 {
 	$stationInfo = getMockStationsData(array('443211'))[0];
 	$eta = getMockLines('234234');
+	sleep(2.7);
 }
 else
 {

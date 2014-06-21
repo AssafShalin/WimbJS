@@ -343,12 +343,14 @@ tr:active td:active {
 	position: absolute;
 	
 	background-color: #000000;
-	transition: top 0.5s;
-  	-webkit-transition: top 0.5s;
+	transition: top 0.5s, visibility 0.5s;
+  	-webkit-transition: top 0.5s, visibility 0.5s;
 }
 .modal-view-visable {
+	visibility: visible;
 	top: 59px;
 }
 .modal-view-unvisable {
+	visibility: hidden;
 	top: 100%;
 }

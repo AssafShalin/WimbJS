@@ -260,14 +260,14 @@ function ModalView() {
 
     this.show = function () {
         this.isVisible = true;
-        $(this.id).addClass('modal-view-unvisable');
-        
-        $(this.id).bind('show', function() {
-            alert('c');
-            //$(this.id).removeClass('modal-view-unvisable');
-            //$(this.id).addClass('modal-view-visable');
-        });
-        $(this.id).show();    
+        //$(this.id).addClass('modal-view-unvisable');
+        $(this.id).removeClass('modal-view-unvisable');
+        $(this.id).addClass('modal-view-visable');
+        //$(this.id).bind('show', function() {
+          //  alert('c');
+            //
+            //
+        //});
             
         
     };
@@ -276,7 +276,7 @@ function ModalView() {
         this.isVisible = false;
         $(this.id).removeClass('modal-view-visable');
         $(this.id).addClass('modal-view-unvisable');
-        $(this.id).one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', _this.onAnimationFinished);
+        //$(this.id).one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', _this.onAnimationFinished);
     };
 
     this.toggle = function() {
@@ -284,9 +284,6 @@ function ModalView() {
         else this.show();
     };
 
-    this.onAnimationFinished = function () {
-        $(_this.id).hide();
-    };
 
 
 }
