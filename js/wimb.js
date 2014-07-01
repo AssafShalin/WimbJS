@@ -419,7 +419,7 @@ function WimbData()
     this.fetchLineETA = function(stationId) {
         this.lastOperation = _this.fetchLineETA;
         this.lastOperationArguments = stationId;
-        this.get('ajax/lines.php?stationId=' + stationId, function (data) {
+        this.get('ajax/eta.php?stationId=' + stationId, function (data) {
            _this.currentTitle = data.station.name;
            _this.onOperationFinish(data.eta);
         });
@@ -595,7 +595,7 @@ function WimbUI()
             _this.listPanel.setTitle('חיפוש');
             _this.searchPanel.show();
             _this.searchPanel.setPlaceholder('חפש מספר אוטובוס');   
-            _this.listPanel.bindListClickAction(function () {});
+            _this.listPanel.bindListClickAction(function () {});    
         }
         else if(type==='NEAR_BY')
         {
