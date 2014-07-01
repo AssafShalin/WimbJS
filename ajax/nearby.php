@@ -14,7 +14,10 @@ if(MOCK)
 }
 else
 {
-	//has to be implemented
+	
+	$nearby = new NearByQuery($lat, $lng);
+	$stations = $nearby->fetchNearBy(); //range of about 2 km
+
 
 }
 echo json_encode($stations);

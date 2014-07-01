@@ -1,6 +1,18 @@
 <?php
-define('MOCK', true);
+define('MOCK', false);
 date_default_timezone_set('Asia/Jerusalem');
+function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longitude2, $unit = 'Km') {
+     $theta = $longitude1 - $longitude2;
+     $distance = (sin(deg2rad($latitude1)) * sin(deg2rad($latitude2))) + (cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * cos(deg2rad($theta)));
+     $distance = acos($distance);
+     $distance = rad2deg($distance);
+     $distance = $distance * 60 * 1.1515; switch($unit) {
+          case 'Mi': break; case 'Km' : $distance = $distance * 1.609344;
+     }
+     return (round($distance,2));
+}
+
+
 class Line
 {
     public $__type__ = 'Line';
@@ -166,7 +178,7 @@ class LinesETAQuery
 	{
 		foreach($lines as $key => $line)
 		{
-			$lines[$key]->destinationName = $destinationName[$line->destination];
+			@$lines[$key]->destinationName = $destinationName[$line->destination];
 			if($lines[$key]->destinationName == null) $lines[$key]->destinationName = "";
 		}
 		return $lines;
@@ -228,5 +240,76 @@ function getMockLines($stationId)
 	return $lineArray;
 
 }
+function stationDistanceCompare($a, $b)
+{
+	return $a->distance > $b->distance;
+}
+class NearByQuery
+{
+	private $range = 0.00835; //about 2.435 km range
+	private $lat;
+	private $lng;
+	private $responseJSON;
+	public function __construct($lat, $lng)
+	{
+		$this->lat = $lat;
+		$this->lng = $lng;
+	}
+
+	private function doRequest()
+	{
+		$url = 'http://wimb.azure-mobile.net/tables/AllStops?$filter=(stop_lat ge ' . ($this->lat - $this->range) . ') and (stop_lat le ' . ($this->lat + $this->range) . ') and (stop_lon ge ' . ($this->lng - $this->range) . ') and (stop_lon le ' . ($this->lng + $this->range) . ')&$select=stop_lat,stop_lon,stop_desc,stop_code,stop_id,stop_name';
+		$url = str_replace(' ', '%20', $url);
+		$httpRequest = new HttpRequest($url);
+		$response = $httpRequest->getResponse();
+		$response = str_replace('כתובת:', '', $response);
+		return $response;	
+	}
+	private function calcDistance($station)
+	{
+		return getDistanceBetweenPointsNew($this->lat,$this->lng,$station->lat,$station->lng);
+	}
+	private function convertJSONToStations()
+	{
+		$json = json_decode($this->responseJSON);
+		$stations = array();
+		foreach ($json as $stationData) {
+			$station = new Station();
+			
+			$station->id = (int)$stationData->stop_code;
+			$station->name = (string)$stationData->stop_name;
+			$station->description = (string)$stationData->stop_desc;
+			$station->lat = (float)$stationData->stop_lat;
+			$station->lng = (float)$stationData->stop_lon;
+			
+			$station->distance = $this->calcDistance($station);
+			
+			$station->alias = "";
+			$stations[] = $station;
+		}
+		return $stations;
+	}
+	public function fetchNearBy()
+	{
+
+		$this->responseJSON = $this->doRequest();
+		$stations =  $this->convertJSONToStations();
+		usort($stations, create_function('$a,$b', 'return $a->distance > $b->distance;'));
+		foreach($stations as $station)
+		{
+			$distance = $station->distance;
+			$station->distance = ($distance < 1)?$distance*1000:$distance;
+			$station->disatnceMeter = ($distance<1)?'M':'Km';
+		}
+		return $stations;
+	}
+}
+
+
+///get list of lines that are '24'
+///http://wimb.azure-mobile.net/tables/RoutesTrips?$filter=(route_short_name eq '24')&$select=route_short_name,route_long_name,agency_id,trip_id
+
+///get list of stations by line id
+///http://wimb.azure-mobile.net/tables/Stop?$filter=(trip_id eq '47617312020113')&$orderby=stop_sequence&$select=stop_headsign,stop_desc,stop_code,stop_sequence,stop_id,trip_id,stop_lon,stop_lat
 
 header('Content-Type: application/json; charset=utf-8');
