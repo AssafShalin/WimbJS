@@ -30,6 +30,16 @@ function Station()
     this.description = '';
     this.distance = '';
 }
+function Trip()
+{
+    this.__type__ = 'Trip';
+    this.id = 0;
+    this.operator = '';
+    this.line = ''
+    this.source = '';
+    this.dest = '';
+
+}
 //</editor-fold>
 
 //<editor-fold desc="UI-Controls">
@@ -368,6 +378,27 @@ function LineListBoxRowAdapter(line)
 
     return self;
 }
+function TripListBoxRowAdapter(trip)
+{
+    //id, operator, name, source, dest
+    this.tripTemplate = this.stationTemplate = '<div class="line_container" id="{0}"><div class="station_operator" style="background-image: url(\'img/operators/{1}.png\');"></div><div class="station_name">{2}</div><div class="station_location">{3}<br/>{4}</div></div>';
+    this.trip = trip;
+    var self = new ListBoxRow();
+    var _this = this;
+    self._this = this;
+
+
+    self.render = function () {
+        return _this.tripTemplate.format(_this.trip.id,
+                                        _this.trip.operator,
+                                        _this.trip.line,
+                                        _this.trip.source,
+                                        _this.trip.dest);
+
+    };
+    return self;
+
+}
 //</editor-fold>
 
 function WimbData()
@@ -495,6 +526,14 @@ function WimbData()
         });
     };
 
+    this.fetchTrips = function (lineNumber) {
+        this.lastOperation = _this.fetchLineETA;
+        this.lastOperationArguments = lineNumber;
+        this.get('ajax/trips.php?line=' + lineNumber, function (data) {
+           _this.currentTitle = 'קו ' + lineNumber;
+           _this.onOperationFinish(data);
+        });
+    }
     this.isStationFaved = function(stationId) {
         for (var i = 0; i < _this.fave.length; i++) {
             if(_this.fave[i].id == stationId) return true;
@@ -594,6 +633,7 @@ function WimbUI()
         {
             _this.listPanel.setTitle('חיפוש');
             _this.searchPanel.show();
+            _this.searchPanel.bindOnSearchEvent(function (searchQuery) { _this.loadTrips(searchQuery); });
             _this.searchPanel.setPlaceholder('חפש מספר אוטובוס');   
             _this.listPanel.bindListClickAction(function () {});    
         }
@@ -622,7 +662,11 @@ function WimbUI()
             _this.dataSource.invokeLastOperation();
         }
     };
+    _this.loadTrips = function (lineNumber) {
+        _this.loader.show();
+        _this.dataSource.fetchTrips(lineNumber);
 
+    };
     _this.loadStationEta = function(stationId) {
         var isStationFaved = _this.dataSource.isStationFaved(stationId);
         _this.loader.show();

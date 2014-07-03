@@ -37,7 +37,15 @@ class Station
     	$this->__type__ = 'Nearby';
     }
 }
-
+class Trip
+{
+	public $__type__ = 'Trip';
+	public $id;
+	public $operator;
+	public $line;
+	public $source;
+	public $dest;
+}
 class HttpRequest
 {
 	private $curl;
@@ -305,11 +313,99 @@ class NearByQuery
 	}
 }
 
+class TripQuery
+{
+	private $line_num;
+	public function __construct($line_num)
+	{
+		$this->line_num = $line_num;
+	}
+	private function createQuery()
+	{
+		$url = 'http://wimb.azure-mobile.net/tables/RoutesTrips?$filter=(route_short_name eq \''. $this->line_num .'\')&$select=route_short_name,route_long_name,agency_id,trip_id';
+		$url = str_replace(' ', '%20', $url);
+		return $url;
+	}
 
-///get list of lines that are '24'
-///http://wimb.azure-mobile.net/tables/RoutesTrips?$filter=(route_short_name eq '24')&$select=route_short_name,route_long_name,agency_id,trip_id
+	private function doRequest()
+	{
+		$query = $this->createQuery();
+		$http = new HttpRequest($query);
+		$response = $http->getResponse();
+		echo $response;
+		exit();
+		return $response;
+	}
+	public function fetchTrips()
+	{
+		$response = $this->doRequest();
+		$trips = $this->parseToTrips($response);
+		return $trips;
+	}
+	private function parseToTrips($response)
+	{
+		$response = json_decode($response);
+		$trips = array();
+		foreach($response as $resp)
+		{
+			$trip = new Trip();
+			$trip->operator =  (string)$resp->agency_id;
+			$trip->id = (string)$resp->trip_id;
+			$trip->line = (string)$resp->route_short_name;
+			
+			$way = explode('<->', $resp->route_long_name);
+			$trip->source = $way[0];
+			$trip->dest = $way[1];
+			$trips[] = $trip;
+		}
+		return $trips;
+	}
+}
 
-///get list of stations by line id
-///http://wimb.azure-mobile.net/tables/Stop?$filter=(trip_id eq '47617312020113')&$orderby=stop_sequence&$select=stop_headsign,stop_desc,stop_code,stop_sequence,stop_id,trip_id,stop_lon,stop_lat
+class RouteQuery
+{
+	private $trip;
+
+	public function __construct($trip)
+	{
+		$this->trip = $trip;
+	}
+	private function createQuery()
+	{
+		$query = 'http://wimb.azure-mobile.net/tables/Stop?$filter=(trip_id eq \''. $this->trip .'\')&$orderby=stop_sequence&$select=stop_headsign,stop_desc,stop_code,stop_sequence,stop_id,trip_id,stop_lon,stop_lat';
+		$query = str_replace(' ', '%20', $query);
+		return $query;
+	}
+	private function doRequest()
+	{
+		$http = new HttpRequest($this->createQuery());
+		return $http->getResponse();
+	}
+	public function fetchRoute()
+	{
+		$response = $this->doRequest();
+		$response = str_replace('כתובת:', '', $response);
+		$route = $this->convertJSONToStations($response);
+		return $route;
+	}
+
+		private function convertJSONToStations($responseJSON)
+	{
+		$json = json_decode($responseJSON);
+
+		$stations = array();
+		foreach ($json as $stationData) {
+			$station = new Station();
+			
+			$station->id = (int)$stationData->stop_code;
+			$station->name = (string)$stationData->stop_headsign;
+			$station->description = (string)$stationData->stop_desc;
+			$station->alias = "";
+			$stations[] = $station;
+		}
+		return $stations;
+	}
+}
+
 
 header('Content-Type: application/json; charset=utf-8');
