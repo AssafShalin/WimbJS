@@ -332,8 +332,6 @@ class TripQuery
 		$query = $this->createQuery();
 		$http = new HttpRequest($query);
 		$response = $http->getResponse();
-		echo $response;
-		exit();
 		return $response;
 	}
 	public function fetchTrips()

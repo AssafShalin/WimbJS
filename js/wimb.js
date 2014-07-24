@@ -424,8 +424,14 @@ function WimbData()
     };
     
     this.getCurrentTitle = function() {return this.currentTitle;};
-    
+    this.preOperationFinish = function () {};
     this.onOperationFinish = function() {};
+    this.postOperationFinish = function() {};
+    this.performCallbacks = function (data) {
+        _this.preOperationFinish(data);
+        _this.onOperationFinish(data);
+        _this.postOperationFinish(data);
+    };
     this.fetchFaveStations = function (force) {
         this.lastOperation = _this.fetchFaveStations;
         this.lastOperationArguments = false;
@@ -438,12 +444,12 @@ function WimbData()
               this.get('ajax/stations.php',function (stations) {
                   _this.fave = stations;
                   _this.saveFaveList();
-                  _this.onOperationFinish(_this.fave);
+                  _this.performCallbacks(_this.fave);
               });
         }
         else {
               console.log('stations are loaded to memory');
-              this.onOperationFinish(this.fave);
+              this.performCallbacks(this.fave);
         }
     };
 
@@ -452,7 +458,7 @@ function WimbData()
         this.lastOperationArguments = stationId;
         this.get('ajax/eta.php?stationId=' + stationId, function (data) {
            _this.currentTitle = data.station.name;
-           _this.onOperationFinish(data.eta);
+           _this.performCallbacks(data.eta);
         });
     };
 
@@ -516,22 +522,22 @@ function WimbData()
                 console.log(_this.currentLat + " " + _this.currentLng);
                 _this.get('ajax/nearby.php?lat=' + _this.currentLat + "&lng=" + _this.currentLng, function (data) {
                     _this.currentTitle = 'תחנות קרובות';
-                    _this.onOperationFinish(data)
+                    _this.performCallbacks(data)
                 });
             }
             else
             {
-                _this.onOperationFinish([]); //error; return empty set
+                _this.performCallbacks([]); //error; return empty set
             }
         });
     };
 
     this.fetchTrips = function (lineNumber) {
-        this.lastOperation = _this.fetchLineETA;
+        this.lastOperation = _this.fetchTrips;
         this.lastOperationArguments = lineNumber;
         this.get('ajax/trips.php?line=' + lineNumber, function (data) {
            _this.currentTitle = 'קו ' + lineNumber;
-           _this.onOperationFinish(data);
+           _this.performCallbacks(data);
         });
     }
     this.isStationFaved = function(stationId) {
@@ -562,6 +568,15 @@ function WimbData()
             _this.isLocationUpdated = false;
             locationFetchedCallback();
         }
+    };
+
+    this.fetchRoute = function(routeId) {
+        this.lastOperation = _this.fetchRoute;
+        this.lastOperationArguments = routeId;
+        this.get('ajax/route.php?trip=' + routeId, function (data) {
+            _this.performCallbacks(data);
+        });
+
     };
 }
 
@@ -604,6 +619,7 @@ function WimbUI()
     };
 
     _this.showSettings = function () {
+        _this.modalView.setContent('<table dir="rtl"><tr><td>אפשר רענון אוטומטי</td><td><input id="allowAutoRefesh" type="checkbox"/></td></tr></table>');
         _this.modalView.toggle();
 
     };
@@ -635,12 +651,31 @@ function WimbUI()
             _this.searchPanel.show();
             _this.searchPanel.bindOnSearchEvent(function (searchQuery) { _this.loadTrips(searchQuery); });
             _this.searchPanel.setPlaceholder('חפש מספר אוטובוס');   
-            _this.listPanel.bindListClickAction(function () {});    
+            _this.listPanel.bindListClickAction(function (row) {
+                _this.loader.show();
+                _this.dataSource.fetchRoute(row.trip.id);
+                _this.dataSource.preOperationFinish = function () {
+                    _this.dataSource.preOperationFinish = function () {};
+                    _this.listPanel.bindListClickAction(function (row) {
+
+                        _this.loadStationEta(row.station.id);
+                    });
+                };
+
+                
+            });    
         }
         else if(type==='NEAR_BY')
         {
             _this.listPanel.setTitle('תחנות קרובות');
             _this.loader.show();
+            _this.postOperationFinish = function () {
+                _this.dataSource.postOperationFinish = function () {};
+                _this.listPanel.bindListClickAction(function (row) {
+                    
+                    _this.loadStationEta(row.station.id);
+                });
+            };
             _this.dataSource.fetchNearbyStations();
         }
         
