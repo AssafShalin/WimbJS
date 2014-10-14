@@ -560,7 +560,7 @@ function WimbData()
                 _this.isLocationUpdated = false;
                 console.log("Location service failed with error " + error.code);
                 locationFetchedCallback();
-            });
+            }, {maximumAge:600000, timeout:5000, enableHighAccuracy: true});
         }
         else
         {
