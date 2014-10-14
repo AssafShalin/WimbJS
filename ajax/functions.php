@@ -1,6 +1,35 @@
 <?php
 define('MOCK', false);
 date_default_timezone_set('Asia/Jerusalem');
+
+include_once dirname(__FILE__) . '/record.php';
+
+class Stats extends Record
+{
+	public $id;
+	public $time;
+	public $ip;
+	public $useragent;
+	public $function;
+	public $GET;
+	public $POST;
+	public $SERVER;
+	
+	public static function SaveStats()
+	{
+		$stat = parent::create();
+		$stat->time = time();
+		$stat->ip = $_SERVER['REMOTE_ADDR'];
+		$stat->useragent = $_SERVER['HTTP_USER_AGENT'];
+		$stat->function = basename(__FILE__, '.php'); 
+		$stat->GET = json_encode($_GET);
+		$stat->POST = json_encode($_POST);
+		$stat->SERVER = json_encode($_SERVER);
+		$stat->save();
+	}
+}
+
+Stats::SaveStats();
 function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longitude2, $unit = 'Km') {
      $theta = $longitude1 - $longitude2;
      $distance = (sin(deg2rad($latitude1)) * sin(deg2rad($latitude2))) + (cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * cos(deg2rad($theta)));
