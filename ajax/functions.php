@@ -21,7 +21,7 @@ class Stats extends Record
 		$stat->time = time();
 		$stat->ip = $_SERVER['REMOTE_ADDR'];
 		$stat->useragent = $_SERVER['HTTP_USER_AGENT'];
-		$stat->function = basename(__FILE__, '.php'); 
+		$stat->function = basename($_SERVER[PHP_SELF], '.php'); 
 		$stat->GET = json_encode($_GET);
 		$stat->POST = json_encode($_POST);
 		$stat->SERVER = json_encode($_SERVER);
