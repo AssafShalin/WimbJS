@@ -4,6 +4,8 @@ date_default_timezone_set('Asia/Jerusalem');
 
 include_once dirname(__FILE__) . '/record.php';
 
+
+
 class Stats extends Record
 {
 	public $id;
@@ -21,15 +23,16 @@ class Stats extends Record
 		$stat->time = time();
 		$stat->ip = $_SERVER['REMOTE_ADDR'];
 		$stat->useragent = $_SERVER['HTTP_USER_AGENT'];
-		$stat->function = basename($_SERVER[PHP_SELF], '.php'); 
+		$stat->function = basename($_SERVER['PHP_SELF'], '.php'); 
 		$stat->GET = json_encode($_GET);
 		$stat->POST = json_encode($_POST);
 		$stat->SERVER = json_encode($_SERVER);
 		$stat->save();
 	}
 }
+if(!preg_match("/log/", $_SERVER['PHP_SELF']))
+	Stats::SaveStats();
 
-Stats::SaveStats();
 function getDistanceBetweenPointsNew($latitude1, $longitude1, $latitude2, $longitude2, $unit = 'Km') {
      $theta = $longitude1 - $longitude2;
      $distance = (sin(deg2rad($latitude1)) * sin(deg2rad($latitude2))) + (cos(deg2rad($latitude1)) * cos(deg2rad($latitude2)) * cos(deg2rad($theta)));
